@@ -232,7 +232,7 @@ def list(config=None):
                     if extra:
                         result = result[0:-1]
 
-                    result += "\n\n"
+                    result += "\n" #\n
                 else:
                     result_stack = colored(
                         "   (*) General options: \n", "green", attrs=["bold",]
@@ -249,7 +249,7 @@ def list(config=None):
                                 colored(key, "magenta"),
                                 value,
                             )
-                    result_stack = result_stack[0:-1] #+ "\n"
+                    result_stack = result_stack[0:-1] + "\n"
 
         result += result_stack
         print(get_formatted_message(result, ""))
