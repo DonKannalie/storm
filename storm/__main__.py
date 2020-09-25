@@ -201,22 +201,19 @@ def list(config=None):
             if host.get("type") == 'entry':
                 if not host.get("host") == "*":
                     result += " {0} -> {1}@{2}:{3}".format(
-                        colored(host["host"], 'green', attrs=["bold", ]),
+                        colored(host["host"], 'green'), #, attrs=["bold", ]
 
                         colored(host.get("options").get(
                             "user", get_default("user", storm_.defaults)
                         ), 'red'),
 
-                        # host.get("options").get(
-                        #     "user", get_default("user", storm_.defaults)
-                        # ),
-
-                        host.get("options").get(
+                        colored(host.get("options").get(
                             "hostname", "[hostname_not_specified]"
-                        ),
-                        host.get("options").get(
+                        ), 'blue'),
+
+                        colored(host.get("options").get(
                             "port", get_default("port", storm_.defaults)
-                        )
+                        ), 'yellow')
                     )
 
                     extra = False
