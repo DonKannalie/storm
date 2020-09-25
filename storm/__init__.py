@@ -108,7 +108,7 @@ class Storm(object):
         results = self.ssh_config.search_host(search_string)
         formatted_results = []
         for host_entry in results:
-            formatted_results.append("    {0} -> {1}@{2}:{3}\n".format(
+            formatted_results.append(" {0} -> {1}@{2}:{3}\n".format(
                 host_entry.get("host"),
                 host_entry.get("options").get(
                     "user", get_default("user", self.defaults)
