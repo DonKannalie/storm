@@ -219,7 +219,7 @@ def list(config=None):
                         if not key in ["user", "hostname", "port"]:
                             if not extra:
                                 custom_options = colored(
-                                    '\n\t[custom options] ', 'white'
+                                    '\t\t[custom options] ', 'white'
                                 )
                                 result += " {0}".format(custom_options)
                             extra = True
@@ -249,7 +249,7 @@ def list(config=None):
                                 colored(key, "magenta"),
                                 value,
                             )
-                    result_stack = result_stack[0:-1] + "\n"
+                    result_stack = result_stack[0:-1] #+ "\n"
 
         result += result_stack
         print(get_formatted_message(result, ""))
