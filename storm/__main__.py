@@ -11,10 +11,12 @@ except ImportError:
 
 from storm import Storm
 from storm.parsers.ssh_uri_parser import parse
-from storm.utils import (get_formatted_message, colored)
+from storm.utils import (get_formatted_message)
 from storm.kommandr import *
 from storm.defaults import get_default
 from storm import __version__
+
+# from storm.ssh_rainmeter import main as rainmeter
 
 import sys
 
@@ -194,14 +196,14 @@ def list(config=None):
     storm_ = get_storm_instance(config)
 
     try:
-        result = colored('Listing entries:', 'white', attrs=["bold", ]) + "\n\n"
+        result = 'Listing entries:'
         result_stack = ""
         for host in storm_.list_entries(True):
 
             if host.get("type") == 'entry':
                 if not host.get("host") == "*":
-                    result += "    {0} -> {1}@{2}:{3}".format(
-                        colored(host["host"], 'green', attrs=["bold", ]),
+                    result += " {0} -> {1}@{2}:{3}".format(
+                        host["host"],
                         host.get("options").get(
                             "user", get_default("user", storm_.defaults)
                         ),
@@ -218,9 +220,7 @@ def list(config=None):
 
                         if not key in ["user", "hostname", "port"]:
                             if not extra:
-                                custom_options = colored(
-                                    '\n\t[custom options] ', 'white'
-                                )
+                                custom_options = '\n\t[custom options] '
                                 result += " {0}".format(custom_options)
                             extra = True
 
@@ -232,21 +232,19 @@ def list(config=None):
                     if extra:
                         result = result[0:-1]
 
-                    result += "\n\n"
+                    result += "\n"
                 else:
-                    result_stack = colored(
-                        "   (*) General options: \n", "green", attrs=["bold",]
-                    )
+                    result_stack = "   (*) General options: \n"
                     for key, value in six.iteritems(host.get("options")):
                         if isinstance(value, type([])):
                             result_stack += "\t  {0}: ".format(
-                                colored(key, "magenta")
+                                key
                             )
                             result_stack += ', '.join(value)
                             result_stack += "\n"
                         else:
                             result_stack += "\t  {0}: {1}\n".format(
-                                colored(key, "magenta"),
+                                key,
                                 value,
                             )
                     result_stack = result_stack[0:-1] + "\n"
@@ -311,7 +309,15 @@ def web(port, debug=False, theme="modern", ssh_config=None):
     """Starts the web UI."""
     from storm import web as _web
     _web.run(port, debug, theme, ssh_config)
+    
+# @command('refresh')
+# def refresh():
+    # """refreshes rainmeter config"""
+    # rainmeter()
 
+# @command('')
+# def copyid():
+    # """todo: copy ssh (id_rsa.pub) to host"""
 
 if __name__ == '__main__':
     sys.exit(main())
