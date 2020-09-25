@@ -8,7 +8,7 @@ import numpy as np
 import getpass
 
 
-_user = {getpass.getuser()}
+_user = getpass.getuser()
 file = f"C:\\users\\{_user}\\.ssh\config"
 target = f"C:\\Users\\{_user}\\Documents\\Rainmeter\\Skins\\ipchecker"
 vpn_path = "C:\\Program Files\\OpenVPN\\bin\\openvpn-gui.exe"
