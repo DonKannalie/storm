@@ -213,7 +213,7 @@ def list(config=None):
 
                         colored(host.get("options").get(
                             "port", get_default("port", storm_.defaults)
-                        ), 'zyan')
+                        ), 'cyan')
                     )
 
                     extra = False
