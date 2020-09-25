@@ -18,6 +18,7 @@ from storm import __version__
 
 import subprocess
 import sys
+import os
 
 def get_storm_instance(config_file=None):
     return Storm(config_file)
@@ -32,8 +33,9 @@ def process_exists(process_name):
     # because Fail message could be translated
     return last_line.lower().startswith(process_name.lower())
 
-if process_exists('Rainmeter.exe'):
-    from storm.ssh_rainmeter import main as rainmeter
+if os.name == 'nt':
+    if process_exists('Rainmeter.exe'):
+        from storm.ssh_rainmeter import main as rainmeter
 
 @command('version')
 def version():
@@ -334,11 +336,12 @@ def web(port, debug=False, theme="modern", ssh_config=None):
     """Starts the web UI."""
     from storm import web as _web
     _web.run(port, debug, theme, ssh_config)
-    
-# @command('refresh')
-# def refresh():
-    # """refreshes rainmeter config"""
-    # rainmeter()
+
+if os.name == 'nt':
+    @command('refresh')
+    def refresh():
+        """refreshes rainmeter config"""
+        rainmeter()
 
 # @command('')
 # def copyid():
