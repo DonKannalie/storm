@@ -209,11 +209,11 @@ def list(config=None):
 
                         colored(host.get("options").get(
                             "hostname", "[hostname_not_specified]"
-                        ), 'blue'),
+                        ), 'yellow'),
 
                         colored(host.get("options").get(
                             "port", get_default("port", storm_.defaults)
-                        ), 'yellow')
+                        ), 'zyan')
                     )
 
                     extra = False
