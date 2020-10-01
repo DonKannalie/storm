@@ -374,28 +374,48 @@ def web(port, debug=False, theme="modern", ssh_config=None):
     _web.run(port, debug, theme, ssh_config)
 
 
-@command('refresh')
-def refresh():
-    """
-    Refreshes rainmeter config on Windows;
-    Conky config on Linux
-    """
-    if os.name == 'nt':
-        if process_exists('Rainmeter.exe'):
-            from storm.ssh_rainmeter import main as rainmeter
-            rainmeter()
-        else:
-            print(get_formatted_message("Rainmeter process does not exist", 'error'))
-    else:
-        print("dbg: conky not yet implemented")
-
-
 @command('copy_id')
 def copy_id(name, config=None):
     """
     ssh-copy-id function (works for Windows and Linux.
     """
     _copy_id(name, config=None)
+
+
+if os.name == 'nt':
+    if process_exists('Rainmeter.exe'):
+        @command('refresh')
+        def refresh():
+            """
+            Creates/Refreshes Rainmeter config.
+            """
+            from storm.ssh_rainmeter import main as rainmeter
+            rainmeter()
+
+else:
+    @command('refresh')
+    def refresh():
+        """
+        Conky config on Linux.
+        """
+        # print(get_formatted_message("Rainmeter process does not exist", 'error'))
+    # else:
+    #     print("dbg: conky not yet implemented")
+
+# @command('refresh')
+# def refresh():
+#     """
+#     Refreshes rainmeter config on Windows;
+#     Conky config on Linux
+#     """
+#     if os.name == 'nt':
+#         if process_exists('Rainmeter.exe'):
+#             from storm.ssh_rainmeter import main as rainmeter
+#             rainmeter()
+#         else:
+#             print(get_formatted_message("Rainmeter process does not exist", 'error'))
+#     else:
+#         print("dbg: conky not yet implemented")
 
 
 if __name__ == '__main__':
