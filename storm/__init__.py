@@ -3,12 +3,13 @@
 from __future__ import print_function
 
 from operator import itemgetter
+import os
 import re
+import subprocess
 from shutil import copyfile
 
 from .parsers.ssh_config_parser import ConfigParser
 from .defaults import get_default
-
 
 __version__ = '0.7.0'
 
@@ -49,7 +50,7 @@ class Storm(object):
         if name == clone_name \
                 or self.is_host_in(clone_name, return_match=True) is not None:
             raise ValueError(ERRORS["already_in"].format(clone_name))
-       
+
         self.ssh_config.add_host(clone_name, host.get('options'))
         if not keep_original:
             self.ssh_config.delete_host(name)
@@ -150,9 +151,9 @@ class Storm(object):
 
         return options
 
-    def is_host_in(self, host, return_match = False, regexp_match=False):
+    def is_host_in(self, host, return_match=False, regexp_match=False):
         for host_ in self.ssh_config.config_data:
-            if host_.get("host") == host\
+            if host_.get("host") == host \
                     or (regexp_match and re.match(host, host_.get("host"))):
                 return True if not return_match else host_
         return False if not return_match else None
@@ -167,3 +168,19 @@ class Storm(object):
                 options[key] = '"{0}"'.format(options[key].strip('"'))
 
         return options
+
+    def copy_ssh_id(self, name, user, ip, port):
+        # cmd = 'type %USERPROFILE%\\.ssh\\id_rsa.pub | ssh {user}@{host}'.format(user=user, host=name)
+
+        cmd = 'ssh-copy-id {host}'.format(host=name)
+
+        if os.name == 'nt':
+            cmd = 'type %USERPROFILE%\\.ssh\\id_rsa.pub | ssh {host} '.format(host=name)
+            cmd += '" if [ ! -f ~/.ssh/authorized_keys ]; then mkdir -p ~/.ssh && touch ~/.ssh/authorized_keys && cat >> ~/.ssh/authorized_keys; else echo file already exists 1>&2; fi"'
+        # print(cmd)
+        output, error = subprocess.Popen(cmd, shell=True,
+                                          stdout=subprocess.PIPE,
+                                          stderr=subprocess.PIPE).communicate()
+        # print(output)
+        # print(error)
+        return error

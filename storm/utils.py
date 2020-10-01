@@ -36,8 +36,8 @@ def get_formatted_message(message, format_type):
     message = " %s" % message
 
     if format_type == 'error':
-        all_message = colored(format_typed, 'white', 'on_red')
+        all_message = colored(format_typed.upper(), 'red', attrs=["bold", ])
     if format_type == 'success':
-        all_message = colored(format_typed, 'white', 'on_green')
+        all_message = colored(format_typed.upper(), 'green', attrs=["bold", ])
 
     return all_message + message

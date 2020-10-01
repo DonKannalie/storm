@@ -3,7 +3,6 @@
 
 from __future__ import print_function
 
-
 try:
     import __builtin__ as builtins
 except ImportError:
@@ -16,9 +15,12 @@ from storm.kommandr import *
 from storm.defaults import get_default
 from storm import __version__
 
+import colorama
 import subprocess
 import sys
 import os
+
+colorama.init()
 
 def get_storm_instance(config_file=None):
     return Storm(config_file)
@@ -33,9 +35,11 @@ def process_exists(process_name):
     # because Fail message could be translated
     return last_line.lower().startswith(process_name.lower())
 
+
 if os.name == 'nt':
     if process_exists('Rainmeter.exe'):
         from storm.ssh_rainmeter import main as rainmeter
+
 
 @command('version')
 def version():
@@ -43,6 +47,31 @@ def version():
     prints the working storm(ssh) version.
     """
     print(__version__)
+
+
+def _copy_id(name, config=None):
+    storm_ = get_storm_instance(config)
+    # for x in storm_.list_entries():
+    #     print(x)
+
+    for _host in storm_.list_entries(True):
+        if _host.get("type") == 'entry':
+            if not _host.get("host") == "*":
+                if _host.get("host") == str(name):
+                    host = _host['host']
+                    user = _host.get("options").get("user", get_default("user", storm_.defaults))
+                    ip = _host.get("options").get("hostname", "[hostname_not_specified]")
+                    port = _host.get("options").get("port", get_default("port", storm_.defaults))
+                    res = storm_.copy_ssh_id(name=name, user=user, ip=ip, port=port)
+                # else:
+                #     res = 'dbg: hostname not found'
+    if not res:
+        print(get_formatted_message('ssh-copy-id to {name}'.format(name=name),
+                                    'success'))
+    else:
+        print(get_formatted_message('ssh-copy-id failed with: {err}'.format(err=res),
+                                    'error'))
+
 
 
 @command('add')
@@ -70,12 +99,14 @@ def add(name, connection_uri, id_file="", o=[], config=None):
             get_formatted_message(
                 '{0} added to your ssh config. you can connect '
                 'it by typing "ssh {0}".'.format(name),
-            'success')
+                'success')
         )
 
     except ValueError as error:
         print(get_formatted_message(error, 'error'), file=sys.stderr)
         sys.exit(1)
+
+    _copy_id(name, config=None)
 
 
 @command('clone')
@@ -97,12 +128,13 @@ def clone(name, clone_name, config=None):
             get_formatted_message(
                 '{0} added to your ssh config. you can connect '
                 'it by typing "ssh {0}".'.format(clone_name),
-            'success')
+                'success')
         )
 
     except ValueError as error:
         print(get_formatted_message(error, 'error'), file=sys.stderr)
         sys.exit(1)
+
 
 @command('move')
 def move(name, entry_name, config=None):
@@ -124,12 +156,13 @@ def move(name, entry_name, config=None):
                 'connect it by typing "ssh {0}".'.format(
                     entry_name
                 ),
-            'success')
+                'success')
         )
 
     except ValueError as error:
         print(get_formatted_message(error, 'error'), file=sys.stderr)
         sys.exit(1)
+
 
 @command('edit')
 def edit(name, connection_uri, id_file="", o=[], config=None):
@@ -157,6 +190,7 @@ def edit(name, connection_uri, id_file="", o=[], config=None):
         print(get_formatted_message(error, 'error'), file=sys.stderr)
         sys.exit(1)
 
+
 @command('update')
 def update(name, connection_uri="", id_file="", o=[], config=None):
     """
@@ -183,6 +217,7 @@ def update(name, connection_uri="", id_file="", o=[], config=None):
         print(get_formatted_message(error, 'error'), file=sys.stderr)
         sys.exit(1)
 
+
 @command('delete')
 def delete(name, config=None):
     """
@@ -195,11 +230,12 @@ def delete(name, config=None):
         print(
             get_formatted_message(
                 'hostname "{0}" deleted successfully.'.format(name),
-            'success')
+                'success')
         )
     except ValueError as error:
         print(get_formatted_message(error, 'error'), file=sys.stderr)
         sys.exit(1)
+
 
 @command('list')
 def list(config=None):
@@ -225,7 +261,7 @@ def list(config=None):
                         _col = 'white'
 
                     result += " {0}\t ->\t {1}@{2}:{3}".format(
-                        colored(host["host"], 'green'), #, attrs=["bold", ]
+                        colored(host["host"], 'green'),  # , attrs=["bold", ]
 
                         colored(_user, _col),
 
@@ -257,10 +293,10 @@ def list(config=None):
                     if extra:
                         result = result[0:-1]
 
-                    result += "\n" #\n
+                    result += "\n"  # \n
                 else:
                     result_stack = colored(
-                        "   (*) General options: \n", "green", attrs=["bold",]
+                        "   (*) General options: \n", "green", attrs=["bold", ]
                     )
                     for key, value in six.iteritems(host.get("options")):
                         if isinstance(value, type([])):
@@ -279,8 +315,9 @@ def list(config=None):
         result += result_stack
         print(get_formatted_message(result, ""))
     except Exception as error:
-        print(get_formatted_message(str(error), 'error'), file=sys.stderr)
+        print(get_formatted_message(str(error), ''), file=sys.stderr)
         sys.exit(1)
+
 
 @command('search')
 def search(search_text, config=None):
@@ -292,7 +329,7 @@ def search(search_text, config=None):
     try:
         results = storm_.search_host(search_text)
         if len(results) == 0:
-            print ('no results found.')
+            print('no results found.')
 
         if len(results) > 0:
             message = 'Listing results for {0}:\n'.format(search_text)
@@ -301,6 +338,7 @@ def search(search_text, config=None):
     except Exception as error:
         print(get_formatted_message(str(error), 'error'), file=sys.stderr)
         sys.exit(1)
+
 
 @command('delete_all')
 def delete_all(config=None):
@@ -316,6 +354,7 @@ def delete_all(config=None):
         print(get_formatted_message(str(error), 'error'), file=sys.stderr)
         sys.exit(1)
 
+
 @command('backup')
 def backup(target_file, config=None):
     """
@@ -328,6 +367,7 @@ def backup(target_file, config=None):
         print(get_formatted_message(str(error), 'error'), file=sys.stderr)
         sys.exit(1)
 
+
 @command('web')
 @arg('port', nargs='?', default=9002, type=int)
 @arg('theme', nargs='?', default="modern", choices=['modern', 'black', 'storm'])
@@ -337,16 +377,18 @@ def web(port, debug=False, theme="modern", ssh_config=None):
     from storm import web as _web
     _web.run(port, debug, theme, ssh_config)
 
+
 if os.name == 'nt':
     @command('refresh')
     def refresh():
         """refreshes rainmeter config"""
         rainmeter()
 
-# @command('')
-# def copyid():
-    # """todo: copy ssh (id_rsa.pub) to host"""
+
+@command('copy_id')
+def copy_id(name, config=None):
+    _copy_id(name, config=None)
+
 
 if __name__ == '__main__':
     sys.exit(main())
-
