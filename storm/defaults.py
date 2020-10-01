@@ -7,7 +7,6 @@ DEFAULT_USER = getpass.getuser()
 
 
 def get_default(key, defaults={}):
-
     if key == 'port':
         return defaults.get("port", DEFAULT_PORT)
 

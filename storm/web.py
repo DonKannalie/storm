@@ -7,7 +7,6 @@ from flask import (Flask, Response, make_response, jsonify, request,
 from storm import Storm, DELETED_SIGN
 from storm.parsers.ssh_uri_parser import parse
 
-
 app = Flask(__name__)
 __THEME__ = "modern"
 
@@ -30,6 +29,7 @@ def response(resp=None, status=200, content_type='application/json'):
 @app.route('/')
 def index():
     return render('index.html', __THEME__)
+
 
 @app.route('/list', methods=['GET'])
 def list_keys():

@@ -179,8 +179,8 @@ class Storm(object):
             cmd += '" if [ ! -f ~/.ssh/authorized_keys ]; then mkdir -p ~/.ssh && touch ~/.ssh/authorized_keys && cat >> ~/.ssh/authorized_keys; else echo file already exists 1>&2; fi"'
         # print(cmd)
         output, error = subprocess.Popen(cmd, shell=True,
-                                          stdout=subprocess.PIPE,
-                                          stderr=subprocess.PIPE).communicate()
+                                         stdout=subprocess.PIPE,
+                                         stderr=subprocess.PIPE).communicate()
         # print(output)
         # print(error)
         return error

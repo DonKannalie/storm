@@ -22,7 +22,6 @@ from . import __version__
 
 
 class AliasedSubParsersAction(argparse._SubParsersAction):
-
     class _AliasedPseudoAction(argparse.Action):
         def __init__(self, name, aliases, help):
             dest = name
@@ -100,6 +99,7 @@ class prog(object):
         else:
             def _command(func):
                 return self._generate_command(func, *args, **kwargs)
+
             return _command
 
     def arg(self, arg_name, *args, **kwargs):
@@ -111,11 +111,13 @@ class prog(object):
         :param type: str
 
         """
+
         def wrapper(func):
             if not getattr(func, 'argopts', None):
                 func.argopts = {}
             func.argopts[arg_name] = (args, kwargs)
             return func
+
         return wrapper
 
     def _generate_command(self, func, name=None, **kwargs):

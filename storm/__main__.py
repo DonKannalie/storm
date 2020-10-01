@@ -396,7 +396,7 @@ else:
     @command('refresh')
     def refresh():
         """
-        Conky config on Linux.
+        Refresh conky config.
         """
         print(get_formatted_message("Conky config not implemented yet", 'error'))
 

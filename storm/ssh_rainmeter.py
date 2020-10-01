@@ -7,13 +7,11 @@ import pandas as pd
 import numpy as np
 import getpass
 
-
 _user = getpass.getuser()
 file = f"C:\\users\\{_user}\\.ssh\config"
 target = f"C:\\Users\\{_user}\\Documents\\Rainmeter\\Skins\\ipchecker"
 vpn_path = "C:\\Program Files\\OpenVPN\\bin\\openvpn-gui.exe"
 
-    
 if not os.path.exists(target):
     os.mkdir(target)
 
@@ -47,10 +45,11 @@ def get_hosts(config_file):
         port = re.match('\\s+port\\s(.*)', line)
         if port:
             df.loc[cnt] = [x, "port", port.group(1)]
-            
+
         first = False
 
     return df.pivot(index='group', columns='var', values='value')
+
 
 measurer = np.vectorize(len)
 
@@ -65,8 +64,6 @@ info = df.sort_values('host').values
 #     print(i)
 
 bg_height = (len(info) * 19) + 35
-
-
 
 template_bat = Template("""@setlocal enableextensions enabledelayedexpansion
 @echo off
@@ -328,39 +325,40 @@ H=10
 
 """)
 
+
 def main():
     t_vars1 = ""
     for hostname, ip, port, user in info:
         ip_us = f"{ip.replace('.', '_')}"
         bat_name = f"ssh_{ip_us}.bat"
         bat_file = template_bat.substitute(ip=ip, user=user, vpn_path=vpn_path)
-        
+
         target_bat = os.path.join(target, 'ssh')
-        
+
         if not os.path.exists(target_bat):
             os.mkdir(target_bat)
-    
+
         with open(os.path.join(target_bat, bat_name), 'w') as file:
             file.write(bat_file)
-    
+
         t_vars1 += f"\n{ip_us}={ip}"
         t_vars1 += f'\n{ip_us}bat="{target}\\ssh\\{bat_name}"'
-    
+
     t_final = head1
     t_final += "\n[Variables]"
     # t_final += temp_vars1
     t_final += t_vars1
     t_final += '\n\n@include2=#@#Styles.inc'
-    
+
     t_vars2 = ""
     for hostname, ip, port, user in info:
         ip_us = f"{ip.replace('.', '_')}"
         t_vars2 += temp_vars1.substitute(ip_us=ip_us, hostname=hostname)
-    
+
     t_final += '\n\n'
-    
+
     t_final += t_vars2
-    
+
     t_vars3 = ""
     for hostname, ip, port, user in info:
         ip_us = f"{ip.replace('.', '_')}"
@@ -369,22 +367,23 @@ def main():
             hostname=hostname,
             col_host_width='-' * (int(col_host_width) - len(hostname))
         )
-    
+
     t_final += temp_vars_bg
     t_final += '\n\n'
     t_final += t_vars3
-    
+
     # print(t_final)
-    
+
     with open(os.path.join(target, 'ssh_checker.ini'), 'w') as file:
         file.write(t_final)
-    
+
     if exists_res:
         print("INFO: Ressource folder already exists")
-    
+
     if ip_dupl:
         print("INFO: Found duplicate ips!!!")
         print(df[df.duplicated(['hostname'], keep=False)])
+
 
 if __name__ == '__main__':
     main()
