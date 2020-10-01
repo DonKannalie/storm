@@ -391,32 +391,14 @@ if os.name == 'nt':
             """
             from storm.ssh_rainmeter import main as rainmeter
             rainmeter()
-
+            print(get_formatted_message("Rainmeter config has been refreshed", 'success'))
 else:
     @command('refresh')
     def refresh():
         """
         Conky config on Linux.
         """
-        # print(get_formatted_message("Rainmeter process does not exist", 'error'))
-    # else:
-    #     print("dbg: conky not yet implemented")
-
-# @command('refresh')
-# def refresh():
-#     """
-#     Refreshes rainmeter config on Windows;
-#     Conky config on Linux
-#     """
-#     if os.name == 'nt':
-#         if process_exists('Rainmeter.exe'):
-#             from storm.ssh_rainmeter import main as rainmeter
-#             rainmeter()
-#         else:
-#             print(get_formatted_message("Rainmeter process does not exist", 'error'))
-#     else:
-#         print("dbg: conky not yet implemented")
-
+        print(get_formatted_message("Conky config not implemented yet", 'error'))
 
 if __name__ == '__main__':
     sys.exit(main())
