@@ -22,6 +22,7 @@ import os
 
 colorama.init()
 
+
 def get_storm_instance(config_file=None):
     return Storm(config_file)
 
@@ -34,11 +35,6 @@ def process_exists(process_name):
     last_line = output.strip().split('\r\n')[-1]
     # because Fail message could be translated
     return last_line.lower().startswith(process_name.lower())
-
-
-if os.name == 'nt':
-    if process_exists('Rainmeter.exe'):
-        from storm.ssh_rainmeter import main as rainmeter
 
 
 @command('version')
@@ -73,11 +69,11 @@ def _copy_id(name, config=None):
                                     'error'))
 
 
-
 @command('add')
 def add(name, connection_uri, id_file="", o=[], config=None):
     """
     Adds a new entry to sshconfig.
+    Runs ssh-copy-id on new host afterwards.
     """
     storm_ = get_storm_instance(config)
 
@@ -378,15 +374,27 @@ def web(port, debug=False, theme="modern", ssh_config=None):
     _web.run(port, debug, theme, ssh_config)
 
 
-if os.name == 'nt':
-    @command('refresh')
-    def refresh():
-        """refreshes rainmeter config"""
-        rainmeter()
+@command('refresh')
+def refresh():
+    """
+    Refreshes rainmeter config on Windows;
+    Conky config on Linux
+    """
+    if os.name == 'nt':
+        if process_exists('Rainmeter.exe'):
+            from storm.ssh_rainmeter import main as rainmeter
+            rainmeter()
+        else:
+            print(get_formatted_message("Rainmeter process does not exist", 'error'))
+    else:
+        print("dbg: conky not yet implemented")
 
 
 @command('copy_id')
 def copy_id(name, config=None):
+    """
+    ssh-copy-id function (works for Windows and Linux.
+    """
     _copy_id(name, config=None)
 
 
