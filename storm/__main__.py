@@ -375,7 +375,7 @@ def web(port, debug=False, theme="modern", ssh_config=None):
     _web.run(port, debug, theme, ssh_config)
 
 
-@command('copy_id')
+@command('copy-id')
 def copy_id(name, config=None):
     """
     ssh-copy-id function (works for Windows and Linux.
