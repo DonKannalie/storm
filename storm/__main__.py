@@ -1,5 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
+# TODO: add autocomplete https://github.com/kislyuk/argcomplete
 
 from __future__ import print_function
 
