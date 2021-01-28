@@ -7,7 +7,7 @@ import json
 
 
 def get_storm_config():
-    config_file = expanduser("~/.stormssh/config")
+    config_file = expanduser("~/.config/stormssh/config")
 
     if exists(config_file):
         try:
