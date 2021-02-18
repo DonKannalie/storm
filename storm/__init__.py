@@ -182,11 +182,11 @@ class Storm(object):
 
         if os.name == 'nt':
             cmd = 'type %USERPROFILE%\\.ssh\\id_rsa.pub | ssh {host} '.format(host=name)
-            cmd += '" if [ ! -f ~/.ssh/authorized_keys ]; then mkdir -p ~/.ssh && touch ~/.ssh/authorized_keys && cat >> ~/.ssh/authorized_keys; else echo file already exists 1>&2; fi"'
-        # print(cmd)
+            cmd += '" if [ ! -f ~/.ssh/authorized_keys ]; then ' \
+                   'mkdir -p ~/.ssh && touch ~/.ssh/authorized_keys && cat >> ~/.ssh/authorized_keys; ' \
+                   'else echo file already exists 1>&2; ' \
+                   'fi"'
         output, error = subprocess.Popen(cmd, shell=True,
                                          stdout=subprocess.PIPE,
                                          stderr=subprocess.PIPE).communicate()
-        # print(output)
-        # print(error)
         return error

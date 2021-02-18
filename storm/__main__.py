@@ -42,36 +42,15 @@ def version():
     print(__version__)
 
 
-def _copy_id(name, config=None):
-    storm_ = get_storm_instance(config)
-    # for x in storm_.list_entries():
-    #     print(x)
-
-    for _host in storm_.list_entries(True):
-        if _host.get("type") == 'entry':
-            if not _host.get("host") == "*":
-                if _host.get("host") == str(name):
-                    host = _host['host']
-                    user = _host.get("options").get("user", get_default("user", storm_.defaults))
-                    ip = _host.get("options").get("hostname", "[hostname_not_specified]")
-                    port = _host.get("options").get("port", get_default("port", storm_.defaults))
-                    res = storm_.copy_ssh_id(name=name, user=user, ip=ip, port=port)
-                # else:
-                #     res = 'dbg: hostname not found'
-    if not res:
-        print(get_formatted_message('ssh-copy-id to {name}'.format(name=name),
-                                    'success'))
-    else:
-        print(get_formatted_message('ssh-copy-id failed with: {err}'.format(err=res),
-                                    'error'))
-
-
 @command('add')
-def add(name, connection_uri, id_file="", o=[], config=None):
+def add(name, connection_uri, id_file="", o=None, config=None):
     """
     Adds a new entry to sshconfig.
     Runs ssh-copy-id on new host afterwards.
     """
+    if o is None:
+        o = []
+
     storm_ = get_storm_instance(config)
 
     try:
@@ -88,6 +67,19 @@ def add(name, connection_uri, id_file="", o=[], config=None):
 
         storm_.add_entry(name, host, user, port, id_file, o)
 
+        try:
+            name_ssh = '{0}@{1} -p {2}'.format(host, user, port)
+            storm_.copy_ssh_id(name_ssh)
+
+            print(
+                get_formatted_message(
+                    'ssh key added to host {0}".'.format(name),
+                    'success')
+            )
+        except Exception as error:
+            print(get_formatted_message(error, 'error'), file=sys.stderr)
+            sys.exit(1)
+
         print(
             get_formatted_message(
                 '{0} added to your ssh config. you can connect '
@@ -99,7 +91,8 @@ def add(name, connection_uri, id_file="", o=[], config=None):
         print(get_formatted_message(error, 'error'), file=sys.stderr)
         sys.exit(1)
 
-    _copy_id(name, config=None)
+    # _copy_id(name, config=None)
+
 
 
 @command('clone')
@@ -158,10 +151,12 @@ def move(name, entry_name, config=None):
 
 
 @command('edit')
-def edit(name, connection_uri, id_file="", o=[], config=None):
+def edit(name, connection_uri, id_file="", o=None, config=None):
     """
     Edits the related entry in ssh config.
     """
+    if o is None:
+        o = []
     storm_ = get_storm_instance(config)
 
     try:
@@ -185,11 +180,13 @@ def edit(name, connection_uri, id_file="", o=[], config=None):
 
 
 @command('update')
-def update(name, connection_uri="", id_file="", o=[], config=None):
+def update(name, connection_uri="", id_file="", o=None, config=None):
     """
     Enhanced version of the edit command featuring multiple
     edits using regular expressions to match entries
     """
+    if o is None:
+        o = []
     storm_ = get_storm_instance(config)
     settings = {}
 
@@ -278,7 +275,7 @@ def list(config=None):
                                 result += " {0}".format(custom_options)
                             extra = True
 
-                            if isinstance(value, collections.Sequence):
+                            if isinstance(value, Sequence):
                                 if isinstance(value, builtins.list):
                                     value = ",".join(value)
 
@@ -372,11 +369,11 @@ def web(port, debug=False, theme="modern", ssh_config=None):
 
 
 @command('copy-id')
-def copy_id(name, config=None):
+def copy_ids(name, config=None):
     """
     ssh-copy-id function (works for Windows and Linux.
     """
-    _copy_id(name, config=None)
+    pass
 
 
 if os.name == 'nt':
