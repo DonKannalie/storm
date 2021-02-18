@@ -11,7 +11,7 @@ from shutil import copyfile
 from .parsers.ssh_config_parser import ConfigParser
 from .defaults import get_default
 
-__version__ = '0.7.0'
+__version__ = '0.7.2'
 
 ERRORS = {
     "already_in": "{0} is already in your sshconfig. "
@@ -30,7 +30,10 @@ class Storm(object):
         self.ssh_config.load()
         self.defaults = self.ssh_config.defaults
 
-    def add_entry(self, name, host, user, port, id_file, custom_options=[]):
+    def add_entry(self, name, host, user, port, id_file, custom_options=None):
+        if custom_options is None:
+            custom_options = []
+
         if self.is_host_in(name):
             raise ValueError(ERRORS["already_in"].format(name))
 
@@ -58,7 +61,10 @@ class Storm(object):
 
         return True
 
-    def edit_entry(self, name, host, user, port, id_file, custom_options=[]):
+    def edit_entry(self, name, host, user, port, id_file, custom_options=None):
+        if custom_options is None:
+            custom_options = []
+
         if not self.is_host_in(name):
             raise ValueError(ERRORS["not_found"].format(name))
 
@@ -109,7 +115,7 @@ class Storm(object):
         results = self.ssh_config.search_host(search_string)
         formatted_results = []
         for host_entry in results:
-            formatted_results.append(" {0} -> {1}@{2}:{3}\n".format(
+            formatted_results.append(" {1}@{2} -p {3}\n".format(
                 host_entry.get("host"),
                 host_entry.get("options").get(
                     "user", get_default("user", self.defaults)

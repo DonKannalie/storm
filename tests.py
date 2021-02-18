@@ -16,7 +16,6 @@ from storm import Storm
 from storm.parsers.ssh_uri_parser import parse
 from storm import __version__
 
-
 # derived from http://www.cyberciti.biz/faq/create-ssh-config-file-on-linux-unix/
 FAKE_SSH_CONFIG_FOR_CLI_TESTS = """
     ### default for all ##
@@ -99,19 +98,19 @@ class StormCliTestCase(unittest.TestCase):
         self.assertTrue(out.startswith(b" Listing entries:\n\n"))
 
         hosts, custom_options = [
-            "aws.apache -> wwwdata@1.2.3.4:22",
-            "nas01 -> root@192.168.1.100:22",
-            "proxyus -> breakfree@vps1.cyberciti.biz:22",
-            "server1 -> nixcraft@server1.cyberciti.biz:4242",
-            "uk.gw.lan uk.lan -> nixcraft@192.168.0.251:22",
-        ], [
-            "[custom options] identityfile=~/.ssh/aws.apache.key",
-            "[custom options] identityfile=~/.ssh/nas01.key",
-            "identityfile=~/.ssh/vps1.cyberciti.biz.key",
-            "localforward=3128 127.0.0.1:3128",
-            "[custom options] identityfile=/nfs/shared/users/nixcraft/keys/server1/id_rsa,/tmp/x.rsa",
-            "[custom options] proxycommand=ssh nixcraft@gateway.uk.cyberciti.biz nc %h %p 2> /dev/null",
-        ]
+                                    "aws.apache -> wwwdata@1.2.3.4:22",
+                                    "nas01 -> root@192.168.1.100:22",
+                                    "proxyus -> breakfree@vps1.cyberciti.biz:22",
+                                    "server1 -> nixcraft@server1.cyberciti.biz:4242",
+                                    "uk.gw.lan uk.lan -> nixcraft@192.168.0.251:22",
+                                ], [
+                                    "[custom options] identityfile=~/.ssh/aws.apache.key",
+                                    "[custom options] identityfile=~/.ssh/nas01.key",
+                                    "identityfile=~/.ssh/vps1.cyberciti.biz.key",
+                                    "localforward=3128 127.0.0.1:3128",
+                                    "[custom options] identityfile=/nfs/shared/users/nixcraft/keys/server1/id_rsa,/tmp/x.rsa",
+                                    "[custom options] proxycommand=ssh nixcraft@gateway.uk.cyberciti.biz nc %h %p 2> /dev/null",
+                                ]
 
         general_options = {
             "forwardx11": "no",
@@ -259,7 +258,6 @@ class StormCliTestCase(unittest.TestCase):
 
         out, err, rc = self.run_cmd("edit worker  {0}".format(self.config_arg))
 
-
     def test_update_invalid_regex(self):
 
         out, err, rc = self.run_cmd("update 'drogba-[0-5]' --o hostname=boss.com {0}".format(self.config_arg))
@@ -360,11 +358,11 @@ class StormTests(unittest.TestCase):
 
         has_yahoo = False
         for item in self.storm.ssh_config.config_data:
-            if item.get("host") == 'yahoo': 
+            if item.get("host") == 'yahoo':
                 has_yahoo = True
                 break
 
-        self.assertEqual(True, has_yahoo) 
+        self.assertEqual(True, has_yahoo)
         self.assertEqual(item.get("options").get("port"), '24')
         self.assertEqual(item.get("options").get("identityfile"), '"/tmp/tmp.pub"')
         self.assertEqual(item.get("options").get("user"), 'ops')
@@ -489,6 +487,7 @@ class StormTests(unittest.TestCase):
 
     def tearDown(self):
         os.unlink('/tmp/ssh_config')
+
 
 if __name__ == '__main__':
     unittest.main()
