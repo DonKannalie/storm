@@ -4,11 +4,7 @@
 
 from __future__ import print_function
 
-try:
-    import __builtin__ as builtins
-except ImportError:
-    import builtins
-
+import builtins
 from storm import Storm
 from storm.parsers.ssh_uri_parser import parse
 from storm.utils import (get_formatted_message, colored)
