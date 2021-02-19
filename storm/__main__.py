@@ -367,14 +367,14 @@ def backup(target_file, config=None):
         sys.exit(1)
 
 
-@command('web')
-@arg('port', nargs='?', default=9002, type=int)
-@arg('theme', nargs='?', default="modern", choices=['modern', 'black', 'storm'])
-@arg('debug', action='store_true', default=False)
-def web(port, debug=False, theme="modern", ssh_config=None):
-    """Starts the web UI."""
-    from storm import web as _web
-    _web.run(port, debug, theme, ssh_config)
+# @command('web')
+# @arg('port', nargs='?', default=9002, type=int)
+# @arg('theme', nargs='?', default="modern", choices=['modern', 'black', 'storm'])
+# @arg('debug', action='store_true', default=False)
+# def web(port, debug=False, theme="modern", ssh_config=None):
+#     """Starts the web UI."""
+#     from storm import web as _web
+#     _web.run(port, debug, theme, ssh_config)
 
 
 # @command('copy-id')
