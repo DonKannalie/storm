@@ -162,7 +162,7 @@ class ConfigParser(object):
 
         return self
 
-    def search_host(self, search_string):
+    def search_host(self, search_string, exact=False):
         results = []
         for host_entry in self.config_data:
             if host_entry.get("type") != 'entry':
@@ -170,17 +170,22 @@ class ConfigParser(object):
             if host_entry.get("host") == "*":
                 continue
 
-            searchable_information = host_entry.get("host")
-            for key, value in six.iteritems(host_entry.get("options")):
-                if isinstance(value, list):
-                    value = " ".join(value)
-                if isinstance(value, int):
-                    value = str(value)
+            if exact:
+                if search_string == host_entry.get("host"):
+                    results.append(host_entry)
+            else:
+                searchable_information = host_entry.get("host")
 
-                searchable_information += " " + value
+                for key, value in six.iteritems(host_entry.get("options")):
+                    if isinstance(value, list):
+                        value = " ".join(value)
+                    if isinstance(value, int):
+                        value = str(value)
 
-            if search_string in searchable_information:
-                results.append(host_entry)
+                    searchable_information += " " + value
+
+                if search_string in searchable_information:
+                    results.append(host_entry)
 
         return results
 

@@ -111,8 +111,11 @@ class Storm(object):
 
         return True
 
+    def _search_host(self, search_string):
+        return self.ssh_config.search_host(search_string)
+
     def search_host(self, search_string):
-        results = self.ssh_config.search_host(search_string)
+        results = self._search_host(search_string)
         formatted_results = []
         for host_entry in results:
             formatted_results.append(" {1}@{2} -p {3}\n".format(
@@ -174,19 +177,3 @@ class Storm(object):
                 options[key] = '"{0}"'.format(options[key].strip('"'))
 
         return options
-
-    def copy_ssh_id(self, name, user, ip, port):
-        # cmd = 'type %USERPROFILE%\\.ssh\\id_rsa.pub | ssh {user}@{host}'.format(user=user, host=name)
-
-        cmd = 'ssh-copy-id {host}'.format(host=name)
-
-        if os.name == 'nt':
-            cmd = 'type %USERPROFILE%\\.ssh\\id_rsa.pub | ssh {host} '.format(host=name)
-            cmd += '" if [ ! -f ~/.ssh/authorized_keys ]; then ' \
-                   'mkdir -p ~/.ssh && touch ~/.ssh/authorized_keys && cat >> ~/.ssh/authorized_keys; ' \
-                   'else echo file already exists 1>&2; ' \
-                   'fi"'
-        output, error = subprocess.Popen(cmd, shell=True,
-                                         stdout=subprocess.PIPE,
-                                         stderr=subprocess.PIPE).communicate()
-        return error

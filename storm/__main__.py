@@ -34,6 +34,17 @@ def process_exists(process_name):
     return last_line.lower().startswith(process_name.lower())
 
 
+def ssh_copy_id(name):
+    cmd = f'ssh-copy-id {name}'
+    if os.name == 'nt':
+        cmd = f'type %USERPROFILE%\\.ssh\\id_rsa.pub | ssh {name} '
+        cmd += '" if [ ! -f ~/.ssh/authorized_keys ]; then ' \
+               'mkdir -p ~/.ssh && touch ~/.ssh/authorized_keys && cat >> ~/.ssh/authorized_keys; ' \
+               'else echo file already exists 1>&2; ' \
+               'fi"'
+    return subprocess.check_output(cmd, shell=True)
+
+
 @command('version')
 def version():
     """
@@ -68,8 +79,7 @@ def add(name, connection_uri, id_file="", o=None, config=None):
         storm_.add_entry(name, host, user, port, id_file, o)
 
         try:
-            name_ssh = '{0}@{1} -p {2}'.format(host, user, port)
-            storm_.copy_ssh_id(name_ssh)
+            ssh_copy_id(name)
 
             print(
                 get_formatted_message(
@@ -92,7 +102,6 @@ def add(name, connection_uri, id_file="", o=None, config=None):
         sys.exit(1)
 
     # _copy_id(name, config=None)
-
 
 
 @command('clone')
@@ -368,31 +377,31 @@ def web(port, debug=False, theme="modern", ssh_config=None):
     _web.run(port, debug, theme, ssh_config)
 
 
-@command('copy-id')
-def copy_ids(name, config=None):
-    """
-    ssh-copy-id function (works for Windows and Linux.
-    """
-    pass
+# @command('copy-id')
+# def copy_ids(name, config=None):
+#     """
+#     ssh-copy-id function (works for Windows and Linux.
+#     """
+#     pass
 
 
-if os.name == 'nt':
-    if process_exists('Rainmeter.exe'):
-        @command('refresh')
-        def refresh():
-            """
-            Creates/Refreshes Rainmeter config.
-            """
-            from storm.ssh_rainmeter import main as rainmeter
-            rainmeter()
-            print(get_formatted_message("Rainmeter config has been refreshed", 'success'))
-else:
-    @command('refresh')
-    def refresh():
-        """
-        Refresh conky config.
-        """
-        print(get_formatted_message("Conky config not implemented yet", 'error'))
+# if os.name == 'nt':
+#     if process_exists('Rainmeter.exe'):
+#         @command('refresh')
+#         def refresh():
+#             """
+#             Creates/Refreshes Rainmeter config.
+#             """
+#             from storm.ssh_rainmeter import main as rainmeter
+#             rainmeter()
+#             print(get_formatted_message("Rainmeter config has been refreshed", 'success'))
+# else:
+#     @command('refresh')
+#     def refresh():
+#         """
+#         Refresh conky config.
+#         """
+#         print(get_formatted_message("Conky config not implemented yet", 'error'))
 
 if __name__ == '__main__':
     sys.exit(main())
