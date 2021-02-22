@@ -38,10 +38,7 @@ def ssh_copy_id(name):
     cmd = f'ssh-copy-id {name}'
     if os.name == 'nt':
         cmd = f'type %USERPROFILE%\\.ssh\\id_rsa.pub | ssh {name} '
-        cmd += '" if [ ! -f ~/.ssh/authorized_keys ]; then ' \
-               'mkdir -p ~/.ssh && touch ~/.ssh/authorized_keys && cat >> ~/.ssh/authorized_keys; ' \
-               'else echo file already exists 1>&2; ' \
-               'fi"'
+        cmd += '"mkdir -p ~/.ssh && touch ~/.ssh/authorized_keys && cat >> ~/.ssh/authorized_keys;"'
     return subprocess.check_output(cmd, shell=True)
 
 
@@ -131,7 +128,7 @@ def clone(name, clone_name, config=None):
         sys.exit(1)
 
 
-@command('move')
+@command('mv')
 def move(name, entry_name, config=None):
     """
     Move an entry to the sshconfig.
@@ -217,7 +214,7 @@ def update(name, connection_uri="", id_file="", o=None, config=None):
         sys.exit(1)
 
 
-@command('delete')
+@command('rm')
 def delete(name, config=None):
     """
     Deletes a single host.
@@ -236,8 +233,8 @@ def delete(name, config=None):
         sys.exit(1)
 
 
-@command('list')
-def list(config=None):
+@command('ls')
+def ls(config=None):
     """
     Lists all hosts from ssh config.
     """
@@ -367,23 +364,37 @@ def backup(target_file, config=None):
         sys.exit(1)
 
 
-# @command('web')
-# @arg('port', nargs='?', default=9002, type=int)
-# @arg('theme', nargs='?', default="modern", choices=['modern', 'black', 'storm'])
-# @arg('debug', action='store_true', default=False)
-# def web(port, debug=False, theme="modern", ssh_config=None):
-#     """Starts the web UI."""
-#     from storm import web as _web
-#     _web.run(port, debug, theme, ssh_config)
+@command('web')
+@arg('port', nargs='?', default=9002, type=int)
+@arg('theme', nargs='?', default="modern", choices=['modern', 'black', 'storm'])
+@arg('debug', action='store_true', default=False)
+def web(port, debug=False, theme="modern", ssh_config=None):
+    """Starts the web UI."""
+    from storm import web as _web
+    _web.run(port, debug, theme, ssh_config)
 
 
-# @command('copy-id')
-# def copy_ids(name, config=None):
-#     """
-#     ssh-copy-id function (works for Windows and Linux.
-#     """
-#     pass
+@command('ip')
+def get_ip(name, config=None):
+    storm_ = get_storm_instance(config)
 
+    hostname = storm_.get_ip(name, exact_search=True)
+    if hostname:
+        if isinstance(hostname, list):
+            for host in hostname:
+                print(host)
+
+
+if os.name == 'nt':
+    @command('copy-id')
+    def copy_ids(name, config=None):
+        """
+        ssh-copy-id function for Windows
+        """
+        storm_ = get_storm_instance(config)
+
+        # if storm_.search_host(name, True):
+        ssh_copy_id(name)
 
 # if os.name == 'nt':
 #     if process_exists('Rainmeter.exe'):

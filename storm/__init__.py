@@ -111,14 +111,14 @@ class Storm(object):
 
         return True
 
-    def _search_host(self, search_string):
-        return self.ssh_config.search_host(search_string)
+    # def _search_host(self, search_string):
+    #     return self.ssh_config.search_host(search_string)
 
-    def search_host(self, search_string):
-        results = self._search_host(search_string)
+    def search_host(self, search_string, exact_search=False):
+        results = self.ssh_config.search_host(search_string, exact_search)
         formatted_results = []
         for host_entry in results:
-            formatted_results.append(" {1}@{2} -p {3}\n".format(
+            formatted_results.append("{1}@{2} -p {3}\n".format(
                 host_entry.get("host"),
                 host_entry.get("options").get(
                     "user", get_default("user", self.defaults)
@@ -177,3 +177,16 @@ class Storm(object):
                 options[key] = '"{0}"'.format(options[key].strip('"'))
 
         return options
+
+    def get_ip(self, search_string, exact_search=False):
+        results = self.ssh_config.search_host(search_string, exact_search)
+        formatted_results = []
+        for host_entry in results:
+            formatted_results.append("{1}\n".format(
+                host_entry.get("host"),
+                host_entry.get("options").get(
+                    "hostname", "[hostname_not_specified]"
+                )
+            ))
+
+        return formatted_results
