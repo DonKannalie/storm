@@ -328,7 +328,8 @@ def search(search_text, config=None):
             print('no results found.')
 
         if len(results) > 0:
-            message = 'Listing results for {0}:\n'.format(search_text)
+            # message = 'Listing results for {0}:\n'.format(search_text)
+            message = ''
             message += "".join(results)
             print(message)
     except Exception as error:
