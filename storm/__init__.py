@@ -178,11 +178,11 @@ class Storm(object):
 
         return options
 
-    def get_ip(self, search_string, exact_search=False):
+    def get_hostname(self, search_string, exact_search=True):
         results = self.ssh_config.search_host(search_string, exact_search)
         formatted_results = []
         for host_entry in results:
-            formatted_results.append("{1}\n".format(
+            formatted_results.append("{1}".format(
                 host_entry.get("host"),
                 host_entry.get("options").get(
                     "hostname", "[hostname_not_specified]"

@@ -375,10 +375,14 @@ def web(port, debug=False, theme="modern", ssh_config=None):
 
 
 @command('ip')
-def get_ip(name, config=None):
+@arg('glob', action='store_false', default=True)
+def get_ip(name, glob=True, config=None):
+    """
+    Get hostname/ip by name in ssh config (use --glob for glob search)
+    """
     storm_ = get_storm_instance(config)
 
-    hostname = storm_.get_ip(name, exact_search=True)
+    hostname = storm_.get_hostname(name, exact_search=glob)
     if hostname:
         if isinstance(hostname, list):
             for host in hostname:
@@ -394,6 +398,7 @@ def copy_ids(name, config=None):
     storm_ = get_storm_instance(config)
     # if storm_.search_host(name, True):
     ssh_copy_id(name)
+
 
 # if os.name == 'nt':
 #     if process_exists('Rainmeter.exe'):
