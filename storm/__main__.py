@@ -385,16 +385,15 @@ def get_ip(name, config=None):
                 print(host)
 
 
-if os.name == 'nt':
-    @command('copy-id')
-    def copy_ids(name, config=None):
-        """
-        ssh-copy-id function for Windows
-        """
-        storm_ = get_storm_instance(config)
-
-        # if storm_.search_host(name, True):
-        ssh_copy_id(name)
+# if os.name == 'nt':
+@command('copy-id')
+def copy_ids(name, config=None):
+    """
+    ssh-copy-id function for Windows
+    """
+    storm_ = get_storm_instance(config)
+    # if storm_.search_host(name, True):
+    ssh_copy_id(name)
 
 # if os.name == 'nt':
 #     if process_exists('Rainmeter.exe'):
