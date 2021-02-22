@@ -162,7 +162,7 @@ class ConfigParser(object):
 
         return self
 
-    def search_host(self, search_string, exact=False):
+    def search_host(self, search_string, exact_search=False):
         results = []
         for host_entry in self.config_data:
             if host_entry.get("type") != 'entry':
@@ -170,7 +170,7 @@ class ConfigParser(object):
             if host_entry.get("host") == "*":
                 continue
 
-            if exact:
+            if exact_search:
                 if search_string == host_entry.get("host"):
                     results.append(host_entry)
             else:

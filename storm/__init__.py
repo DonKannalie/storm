@@ -178,8 +178,9 @@ class Storm(object):
 
         return options
 
-    def get_hostname(self, search_string, exact_search=True):
-        results = self.ssh_config.search_host(search_string, exact_search)
+    def get_hostname(self, search_string, glob):
+        glob = not glob
+        results = self.ssh_config.search_host(search_string, exact_search=glob)
         formatted_results = []
         for host_entry in results:
             formatted_results.append("{0}".format(

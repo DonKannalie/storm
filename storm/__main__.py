@@ -376,18 +376,20 @@ def web(port, debug=False, theme="modern", ssh_config=None):
 
 
 @command('ip')
-@arg('glob', action='store_false', default=True)
-def get_ip(name, glob=True, config=None):
+@arg('glob', action='store_true', default=False)
+def get_ip(name, glob=False, con=False, config=None):
     """
     Get hostname/ip by name in ssh config (use --glob for glob search)
     """
+    # TODO: add user@hostname connection output
     storm_ = get_storm_instance(config)
 
-    hostname = storm_.get_hostname(name, exact_search=glob)
+    hostname = storm_.get_hostname(name, glob=glob)
+
     if hostname:
         if isinstance(hostname, list):
             for host in hostname:
-                print(host)
+                print(get_formatted_message(host, 'success'), file=sys.stderr)
 
 
 # if os.name == 'nt':
