@@ -11,7 +11,7 @@ from shutil import copyfile
 from .parsers.ssh_config_parser import ConfigParser
 from .defaults import get_default
 
-__version__ = '0.7.3'
+__version__ = '0.7.15'
 
 ERRORS = {
     "already_in": "{0} is already in your sshconfig. "
@@ -144,18 +144,14 @@ class Storm(object):
             options['deleted_fields'] = ["identityfile"]
         else:
             if id_file:
-                options.update({
-                    'identityfile': id_file,
-                })
+                options.update({'identityfile': id_file, })
 
         if len(custom_options) > 0:
             for custom_option in custom_options:
                 if '=' in custom_option:
                     key, value = custom_option.split("=")
 
-                    options.update({
-                        key.lower(): value,
-                    })
+                    options.update({key.lower(): value,})
         options = self._quote_options(options)
 
         return options

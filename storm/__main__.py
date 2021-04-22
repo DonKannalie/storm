@@ -12,10 +12,12 @@ from storm.kommandr import *
 from storm.defaults import get_default
 from storm import __version__
 
+import platform  # For getting the operating system name
 import colorama
 import subprocess
 import sys
 import os
+import re
 
 colorama.init()
 
@@ -36,10 +38,21 @@ def process_exists(process_name):
 
 def ssh_copy_id(name):
     cmd = f'ssh-copy-id {name}'
-    if os.name == 'nt':
+    if platform.system().lower() == 'windows':
         cmd = f'type %USERPROFILE%\\.ssh\\id_rsa.pub | ssh {name} '
         cmd += '"mkdir -p ~/.ssh && touch ~/.ssh/authorized_keys && cat >> ~/.ssh/authorized_keys;"'
     return subprocess.check_output(cmd, shell=True)
+
+
+def ping(host_ip, n=None):
+    """
+    Returns True if host responds to a ping request
+    """
+    n = 1 if n is None else n
+    param = "-n" if platform.system().lower() == "windows" else "-c"
+    cmd = f"ping {param} {str(n)} {host_ip}"
+    out = subprocess.getstatusoutput(cmd)
+    return out
 
 
 @command('version')
@@ -386,21 +399,44 @@ def get_ip(name, glob=False, con=False, config=None):
 
     hostname = storm_.get_hostname(name, glob=glob)
 
-    if hostname:
-        if isinstance(hostname, list):
-            for host in hostname:
-                print(get_formatted_message(host, 'success'), file=sys.stderr)
+    if hostname and isinstance(hostname, list):
+        for host in hostname:
+            print(get_formatted_message(host, 'success'), file=sys.stderr)
 
 
-# if os.name == 'nt':
 @command('copy-id')
 def copy_ids(name, config=None):
     """
-    ssh-copy-id function for Windows
+    ssh-copy-id function for Unix/Windows
     """
     storm_ = get_storm_instance(config)
     # if storm_.search_host(name, True):
     ssh_copy_id(name)
+
+
+@command('ping')
+# @arg('glob', action='store_true', default=False)
+@arg('n', type=int, default=1)
+def ping_host(name, n=None, config=None, glob=False):
+    """
+    ping host
+    """
+    # if glob: search_host, show found hosts name and corr. ip
+
+    storm_ = get_storm_instance(config)
+    ips = storm_.get_hostname(name, glob=glob)
+    if ips:
+        print(f"Pinging host: {name} with {', '.join(ips)}")
+        for ip in ips:
+            output = ping(host_ip=ip, n=n)
+            print(output)
+            failed = re.findall(r".*([U|u]nreachable).*", output[1], re.MULTILINE)
+            if failed:
+                print(get_formatted_message(f"host: {name} with {ip} not reached", 'error'), file=sys.stderr)
+            else:
+                print(get_formatted_message(f"host: {name} with {ip} reached", 'success'), file=sys.stderr)
+    else:
+        print(get_formatted_message(f"host: {name} not found", 'error'), file=sys.stderr)
 
 
 # if os.name == 'nt':
