@@ -53,7 +53,7 @@ def ping(host_ip, n=None):
     if n is None:
         n = 1
     param = '-n' if platform.system().lower() == 'windows' else '-c'
-    cmd = ['ping', param, n, host_ip]
+    cmd = ['ping', str(param), str(n), str(host_ip)]
     return subprocess.call(cmd) == 0
 
 
@@ -424,10 +424,19 @@ def ping_host(name, n=None, config=None):
     ping host
     """
     storm_ = get_storm_instance(config)
-    ips = get_ip(name, glob=False)
-    print(ips)
-    for ip in ips:
-        ping(ip[0].strip(), n)
+    name = 'beast'
+    ips = storm_.get_hostname(name, glob=False)
+    if ips:
+        print(f"Pinging {', '.join(ips)}")
+        for ip in ips:
+            reached = ping(ip[0].strip(), 1)
+            if reached:
+                print(get_formatted_message(f"host: {name} with {ip} reached", 'success'), file=sys.stderr)
+            else:
+                print(get_formatted_message(f"host: {name} with {ip} not reached", 'error'), file=sys.stderr)
+
+    else:
+        print(get_formatted_message(f"host: {name} not found", 'error'), file=sys.stderr)
 
 # if os.name == 'nt':
 #     if process_exists('Rainmeter.exe'):
