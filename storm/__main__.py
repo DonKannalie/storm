@@ -37,7 +37,7 @@ def process_exists(process_name):
 
 def ssh_copy_id(name):
     cmd = f'ssh-copy-id {name}'
-    if os.name == 'nt':
+    if platform.system().lower() == 'windows':
         cmd = f'type %USERPROFILE%\\.ssh\\id_rsa.pub | ssh {name} '
         cmd += '"mkdir -p ~/.ssh && touch ~/.ssh/authorized_keys && cat >> ~/.ssh/authorized_keys;"'
     return subprocess.check_output(cmd, shell=True)
@@ -48,8 +48,6 @@ def ping(host_ip, n=None):
     Returns True if host (str) responds to a ping request.
     Remember that a host may not respond to a ping (ICMP) request even if the host name is valid.
     """
-    if n is None:
-        n = 1
     param = '-n' if platform.system().lower() == 'windows' else '-c'
     cmd = ['ping', param, str(n), str(host_ip)]
     print(' '.join(cmd))
@@ -405,7 +403,6 @@ def get_ip(name, glob=False, con=False, config=None):
             print(get_formatted_message(host, 'success'), file=sys.stderr)
 
 
-# if os.name == 'nt':
 @command('copy-id')
 def copy_ids(name, config=None):
     """
@@ -417,6 +414,8 @@ def copy_ids(name, config=None):
 
 
 @command('ping')
+@arg('glob', action='store_true', default=False)
+@arg('n', type=int, default=1)
 def ping_host(name, n=None, config=None, glob=False):
     """
     ping host
