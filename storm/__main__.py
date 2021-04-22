@@ -423,6 +423,7 @@ def ping_host(name, n=None, config=None):
     """
     ping host
     """
+    storm_ = get_storm_instance(config)
     ips = get_ip(name, glob=False)
     print(ips)
     for ip in ips:
