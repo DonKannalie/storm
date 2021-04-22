@@ -12,6 +12,7 @@ from storm.kommandr import *
 from storm.defaults import get_default
 from storm import __version__
 
+import platform  # For getting the operating system name
 import colorama
 import subprocess
 import sys
@@ -40,6 +41,20 @@ def ssh_copy_id(name):
         cmd = f'type %USERPROFILE%\\.ssh\\id_rsa.pub | ssh {name} '
         cmd += '"mkdir -p ~/.ssh && touch ~/.ssh/authorized_keys && cat >> ~/.ssh/authorized_keys;"'
     return subprocess.check_output(cmd, shell=True)
+
+
+
+
+def ping(host_ip, n=None):
+    """
+    Returns True if host (str) responds to a ping request.
+    Remember that a host may not respond to a ping (ICMP) request even if the host name is valid.
+    """
+    if n is None:
+        n = 1
+    param = '-n' if platform.system().lower() == 'windows' else '-c'
+    cmd = ['ping', param, n, host_ip]
+    return subprocess.call(cmd) == 0
 
 
 @command('version')
@@ -396,12 +411,22 @@ def get_ip(name, glob=False, con=False, config=None):
 @command('copy-id')
 def copy_ids(name, config=None):
     """
-    ssh-copy-id function for Windows
+    ssh-copy-id function for Unix/Windows
     """
     storm_ = get_storm_instance(config)
     # if storm_.search_host(name, True):
     ssh_copy_id(name)
 
+
+@command('ping')
+def ping_host(name, n=None, config=None):
+    """
+    ping host
+    """
+    ips = get_ip(name, glob=False)
+    print(ips)
+    for ip in ips:
+        ping(ip[0].strip(), n)
 
 # if os.name == 'nt':
 #     if process_exists('Rainmeter.exe'):
