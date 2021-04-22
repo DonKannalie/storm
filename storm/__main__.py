@@ -414,7 +414,7 @@ def copy_ids(name, config=None):
     ssh_copy_id(name)
 
 
-@command('ping')
+@command('p')
 # @arg('glob', action='store_true', default=False)
 @arg('n', type=int, default=1)
 def ping_host(name, n=None, config=None, glob=False):
