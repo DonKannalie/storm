@@ -424,7 +424,6 @@ def ping_host(name, n=None, config=None):
     ping host
     """
     storm_ = get_storm_instance(config)
-    name = 'beast'
     ips = storm_.get_hostname(name, glob=False)
     if ips:
         print(f"Pinging {', '.join(ips)}")
