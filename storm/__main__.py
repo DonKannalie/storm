@@ -426,7 +426,7 @@ def ping_host(name, n=None, config=None, glob=False):
     if ips:
         print(f"Pinging host: {name} with {', '.join(ips)}")
         for ip in ips:
-            reached = ping(host_ip=ip[0], n=n)
+            reached = ping(host_ip=ip, n=n)
             if reached:
                 print(get_formatted_message(f"host: {name} with {ip} reached", 'success'), file=sys.stderr)
             else:
