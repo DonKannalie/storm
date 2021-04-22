@@ -51,8 +51,8 @@ def ping(host_ip, n=None):
     if n is None:
         n = 1
     param = '-n' if platform.system().lower() == 'windows' else '-c'
-    cmd = ['ping', str(param), str(n), str(host_ip)]
-    print(cmd)
+    cmd = ['ping', param, str(n), str(host_ip)]
+    print(' '.join(cmd))
     return subprocess.call(cmd) == 0
 
 
@@ -417,16 +417,16 @@ def copy_ids(name, config=None):
 
 
 @command('ping')
-def ping_host(name, n=None, config=None):
+def ping_host(name, n=None, config=None, glob=False):
     """
     ping host
     """
     storm_ = get_storm_instance(config)
-    ips = storm_.get_hostname(name, glob=False)
+    ips = storm_.get_hostname(name, glob=glob)
     if ips:
         print(f"Pinging host: {name} with {', '.join(ips)}")
         for ip in ips:
-            reached = ping(ip[0].strip(), 1)
+            reached = ping(host_ip=ip[0], n=n)
             if reached:
                 print(get_formatted_message(f"host: {name} with {ip} reached", 'success'), file=sys.stderr)
             else:
