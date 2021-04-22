@@ -43,8 +43,6 @@ def ssh_copy_id(name):
     return subprocess.check_output(cmd, shell=True)
 
 
-
-
 def ping(host_ip, n=None):
     """
     Returns True if host (str) responds to a ping request.
@@ -54,6 +52,7 @@ def ping(host_ip, n=None):
         n = 1
     param = '-n' if platform.system().lower() == 'windows' else '-c'
     cmd = ['ping', str(param), str(n), str(host_ip)]
+    print(cmd)
     return subprocess.call(cmd) == 0
 
 
@@ -401,10 +400,9 @@ def get_ip(name, glob=False, con=False, config=None):
 
     hostname = storm_.get_hostname(name, glob=glob)
 
-    if hostname:
-        if isinstance(hostname, list):
-            for host in hostname:
-                print(get_formatted_message(host, 'success'), file=sys.stderr)
+    if hostname and isinstance(hostname, list):
+        for host in hostname:
+            print(get_formatted_message(host, 'success'), file=sys.stderr)
 
 
 # if os.name == 'nt':
@@ -426,7 +424,7 @@ def ping_host(name, n=None, config=None):
     storm_ = get_storm_instance(config)
     ips = storm_.get_hostname(name, glob=False)
     if ips:
-        print(f"Pinging {', '.join(ips)}")
+        print(f"Pinging host: {name} with {', '.join(ips)}")
         for ip in ips:
             reached = ping(ip[0].strip(), 1)
             if reached:
@@ -436,6 +434,7 @@ def ping_host(name, n=None, config=None):
 
     else:
         print(get_formatted_message(f"host: {name} not found", 'error'), file=sys.stderr)
+
 
 # if os.name == 'nt':
 #     if process_exists('Rainmeter.exe'):
