@@ -416,7 +416,7 @@ def copy_ids(name, config=None):
 @command('ping')
 @arg('glob', action='store_true', default=False)
 @arg('n', type=int, default=1)
-def ping_host(name, n=None, config=None, glob=False):
+def ping_host(name, n, config=None, glob=False):
     """
     ping host
     """
