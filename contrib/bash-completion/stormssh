@@ -19,7 +19,10 @@ __stormssh(){
                   $storm_command = delete ||
                   $storm_command = list ||
                   $storm_command = search ||
-                  $storm_command = delete_all ]]; then
+                  $storm_command = delete_all ||
+                  $storm_command = get_ip ||
+                  $storm_command = copy_ids ||
+                  $storm_command = ping ]]; then
                 options="$common_options"
             fi
             if [[ $storm_command = add || $storm_command = edit ]]; then
@@ -34,7 +37,7 @@ __stormssh(){
         fi
     else
         if [[ -z $storm_command ]]; then
-            options="add backup clone delete delete_all edit list move search update version web"
+            options="add backup clone delete delete_all edit list move search update version web get_ip ping"
         fi
         if [[ $storm_command ]]; then
             if [[ $storm_command = clone || 

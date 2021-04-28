@@ -419,7 +419,7 @@ def copy_ids(name, config=None):
 @arg('n', type=int, default=1)
 def ping_host(name, n=None, config=None, glob=False):
     """
-    ping host
+    ping host by ip
     """
     # if glob: search_host, show found hosts name and corr. ip
 
