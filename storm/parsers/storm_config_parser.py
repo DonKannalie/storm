@@ -5,8 +5,9 @@ from os.path import exists
 from os.path import join
 from os import makedirs
 from os import getcwd
-from storm.defaults import CONFIG_DATA
 from pathlib import Path
+from storm.utils import get_formatted_message
+from storm.defaults import CONFIG_DATA
 import json
 
 
@@ -29,5 +30,5 @@ def get_storm_config():
         if config_file.exists():
             with open(config_file, 'w') as cf:
                 json.dump(CONFIG_DATA, cf, indent=4)
-            print("StormSSH: Config file created in %s." % config_root)
+            print(get_formatted_message("StormSSH: Config file created in %s." % config_root, 'success'))
     return {}
