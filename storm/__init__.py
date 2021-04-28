@@ -9,7 +9,7 @@ from shutil import copyfile
 from .parsers.ssh_config_parser import ConfigParser
 from .defaults import get_default
 
-__version__ = '0.7.20'
+__version__ = '0.7.21'
 
 ERRORS = {
     "already_in": "{0} is already in your sshconfig. "
