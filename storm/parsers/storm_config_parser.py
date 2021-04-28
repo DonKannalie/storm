@@ -12,7 +12,6 @@ import json
 
 
 def get_storm_config():
-
     config_root = Path.home().joinpath(".config/stormssh")
     config_file = config_root.joinpath("config")
 
@@ -30,5 +29,7 @@ def get_storm_config():
         if config_file.exists():
             with open(config_file, 'w') as cf:
                 json.dump(CONFIG_DATA, cf, indent=4)
-            print(get_formatted_message("StormSSH: Config file created in %s." % config_root, 'success'))
+            if config_file.exists():
+                print(get_formatted_message("StormSSH: Config file created: %s." % config_file, 'success'))
+
     return {}
