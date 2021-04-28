@@ -19,10 +19,11 @@ def get_storm_config():
         except Exception as error:
             pass
     else:
-        # makedirs(expanduser("~/.config/stormssh"), exist_ok=True)
+        makedirs(expanduser("~/.config/stormssh"), exist_ok=True)
         print(os.getcwd())
+        print(join(os.getcwd(), 'config'))
+        print(exists(join(os.getcwd(), 'config')))
         print(expanduser("~/.config/stormssh"))
 
     return {}
 
-get_storm_config()
