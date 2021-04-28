@@ -437,6 +437,15 @@ def ping_host(name, n=None, config=None, glob=False):
     else:
         print(get_formatted_message(f"host: {name} not found", 'error'), file=sys.stderr)
 
+# TODO: add create-config function; remove from parsers/get_storm_config()
+# TODO: add add-alias function, etc.
+# @command('storm-config')
+# @arg('create', action='store_true', default=False)
+# @arg('delete', action='store_true', default=False)
+# def storm_config(create=False):
+#     if create:
+#         print("")
+
 
 # if os.name == 'nt':
 #     if process_exists('Rainmeter.exe'):
