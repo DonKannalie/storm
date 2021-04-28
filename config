@@ -1,0 +1,14 @@
+{
+    "aliases": {
+        "add": ["create", "touch"],
+        "move": ["mv"],
+        "update": ["up"],
+        "delete": ["rm"],
+        "list": ["ls", "lst", "show"],
+        "search": ["find"],
+        "get-ip": ["ip", "gip"],
+        "copy-id": ["cid"],
+        "ping": ["p"]
+    }
+
+}

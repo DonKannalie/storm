@@ -17,3 +17,5 @@ def get_storm_config():
         except Exception as error:
             pass
     return {}
+
+print(expanduser("~/.config/stormssh/config"))

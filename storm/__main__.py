@@ -141,7 +141,7 @@ def clone(name, clone_name, config=None):
         sys.exit(1)
 
 
-@command('mv')
+@command('move')
 def move(name, entry_name, config=None):
     """
     Move an entry to the sshconfig.
@@ -227,7 +227,7 @@ def update(name, connection_uri="", id_file="", o=None, config=None):
         sys.exit(1)
 
 
-@command('rm')
+@command('delete')
 def delete(name, config=None):
     """
     Deletes a single host.
@@ -246,8 +246,8 @@ def delete(name, config=None):
         sys.exit(1)
 
 
-@command('ls')
-def ls(config=None):
+@command('list')
+def list(config=None):
     """
     Lists all hosts from ssh config.
     """
@@ -388,7 +388,7 @@ def web(port, debug=False, theme="modern", ssh_config=None):
     _web.run(port, debug, theme, ssh_config)
 
 
-@command('ip')
+@command('get-ip')
 @arg('glob', action='store_true', default=False)
 def get_ip(name, glob=False, con=False, config=None):
     """
@@ -414,7 +414,7 @@ def copy_ids(name, config=None):
     ssh_copy_id(name)
 
 
-@command('p')
+@command('ping')
 # @arg('glob', action='store_true', default=False)
 @arg('n', type=int, default=1)
 def ping_host(name, n=None, config=None, glob=False):
