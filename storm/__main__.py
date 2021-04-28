@@ -16,7 +16,6 @@ import platform  # For getting the operating system name
 import colorama
 import subprocess
 import sys
-import os
 import re
 
 colorama.init()

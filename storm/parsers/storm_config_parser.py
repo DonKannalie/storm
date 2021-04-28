@@ -2,12 +2,13 @@
 
 from os.path import expanduser
 from os.path import exists
-
+from os.path import join
+from os import makedirs
 import json
 
 
 def get_storm_config():
-    config_file = expanduser("~/.config/stormssh/config")
+    config_file = join(expanduser("~/.config/stormssh"), "config")
 
     if exists(config_file):
         try:
@@ -16,6 +17,7 @@ def get_storm_config():
 
         except Exception as error:
             pass
+    else:
+        makedirs(expanduser("~/.config/stormssh"), exist_ok=True)
     return {}
 
-print(expanduser("~/.config/stormssh/config"))

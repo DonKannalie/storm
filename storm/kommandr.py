@@ -150,6 +150,7 @@ class prog(object):
                                                aliases=aliases,
                                                help=func_help)
         spec = inspect.getargspec(func)
+        # spec = inspect.getfullargspec(func)
         opts = reversed(list(izip_longest(reversed(spec.args or []),
                                           reversed(spec.defaults or []),
                                           fillvalue=self._POSITIONAL())))

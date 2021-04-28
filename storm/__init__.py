@@ -3,9 +3,7 @@
 from __future__ import print_function
 
 from operator import itemgetter
-import os
 import re
-import subprocess
 from shutil import copyfile
 
 from .parsers.ssh_config_parser import ConfigParser
