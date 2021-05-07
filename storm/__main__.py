@@ -17,16 +17,8 @@ import colorama
 import subprocess
 import sys
 import re
-from iterfzf import iterfzf
-
 
 colorama.init()
-
-
-class InvalidValueError(Exception):
-    def __init__(self):
-        self.message = 'invalid value: "@" cannot be used in name.'
-        super().__init__(self.message)
 
 
 def get_storm_instance(config_file=None):
@@ -85,7 +77,7 @@ def add(name, connection_uri, id_file="", o=None, config=None):
 
         # validate name
         if '@' in name:
-            raise InvalidValueError
+            raise ValueError('invalid value: "@" cannot be used in name.')
 
         user, host, port = parse(
             connection_uri,
@@ -132,7 +124,7 @@ def clone(name, clone_name, config=None):
 
         # validate name
         if '@' in name:
-            raise InvalidValueError
+            raise ValueError('invalid value: "@" cannot be used in name.')
 
         storm_.clone_entry(name, clone_name)
 
@@ -158,7 +150,7 @@ def move(name, entry_name, config=None):
     try:
 
         if '@' in name:
-            raise InvalidValueError
+            raise ValueError('invalid value: "@" cannot be used in name.')
 
         storm_.clone_entry(name, entry_name, keep_original=False)
 
@@ -385,14 +377,14 @@ def backup(target_file, config=None):
         sys.exit(1)
 
 
-# @command('web')
-# @arg('port', nargs='?', default=9002, type=int)
-# @arg('theme', nargs='?', default="modern", choices=['modern', 'black', 'storm'])
-# @arg('debug', action='store_true', default=False)
-# def web(port, debug=False, theme="modern", ssh_config=None):
-#     """Starts the web UI."""
-#     from storm import web as _web
-#     _web.run(port, debug, theme, ssh_config)
+@command('web')
+@arg('port', nargs='?', default=9002, type=int)
+@arg('theme', nargs='?', default="modern", choices=['modern', 'black', 'storm'])
+@arg('debug', action='store_true', default=False)
+def web(port, debug=False, theme="modern", ssh_config=None):
+    """Starts the web UI."""
+    from storm import web as _web
+    _web.run(port, debug, theme, ssh_config)
 
 
 @command('get-ip')
@@ -416,7 +408,7 @@ def copy_ids(name, config=None):
     """
     ssh-copy-id function for Unix/Windows
     """
-    # storm_ = get_storm_instance(config)
+    storm_ = get_storm_instance(config)
     # if storm_.search_host(name, True):
     ssh_copy_id(name)
 
@@ -431,37 +423,20 @@ def ping_host(name, n=None, config=None, glob=False):
     # if glob: search_host, show found hosts name and corr. ip
 
     storm_ = get_storm_instance(config)
-    entries = storm_.list_entries()
+    ips = storm_.get_hostname(name, glob=glob)
+    if ips:
+        print(f"Pinging host: {name} with {', '.join(ips)}")
+        for ip in ips:
+            output = ping(host_ip=ip, n=n)
+            print(output)
+            failed = re.findall(r".*([U|u]nreachable).*", output[1], re.MULTILINE)
+            if failed:
+                print(get_formatted_message(f"host: {name} with {ip} not reached", 'error'), file=sys.stderr)
+            else:
+                print(get_formatted_message(f"host: {name} with {ip} reached", 'success'), file=sys.stderr)
+    else:
+        print(get_formatted_message(f"host: {name} not found", 'error'), file=sys.stderr)
 
-    ping_list = []
-    for entry in entries:
-        ping_list.append(entry['host'])
-
-    iterfzf(ping_list)
-
-# def ping_host(name, n=None, config=None, glob=False):
-#     """
-#     ping host by ip
-#     """
-#     # if glob: search_host, show found hosts name and corr. ip
-#
-#     storm_ = get_storm_instance(config)
-#     ips = storm_.get_hostname(name, glob=glob)
-#     if ips:
-#         print(f"Pinging host: {name} with {', '.join(ips)}")
-#         for ip in ips:
-#             output = ping(host_ip=ip, n=n)
-#             print(output)
-#             failed = re.findall(r".*([U|u]nreachable).*", output[1], re.MULTILINE)
-#             if failed:
-#                 print(get_formatted_message(f"host: {name} with {ip} not reached", 'error'), file=sys.stderr)
-#             else:
-#                 print(get_formatted_message(f"host: {name} with {ip} reached", 'success'), file=sys.stderr)
-#     else:
-#         print(get_formatted_message(f"host: {name} not found", 'error'), file=sys.stderr)
-
-
-# TODO: add
 # TODO: add create-config function; remove from parsers/get_storm_config()
 # TODO: add add-alias function, etc.
 # @command('storm-config')
@@ -470,8 +445,6 @@ def ping_host(name, n=None, config=None, glob=False):
 # def storm_config(create=False):
 #     if create:
 #         print("")
-
-# TODO: add dotfile copy; use -c flag for  copy_ids
 
 
 # if os.name == 'nt':
