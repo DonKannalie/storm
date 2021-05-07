@@ -19,7 +19,6 @@ def get_storm_config():
         try:
             config_data = json.loads(open(config_file).read())
             return config_data
-
         except Exception as error:
             pass
     else:
