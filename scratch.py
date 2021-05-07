@@ -1,3 +1,17 @@
+from storm.__main__ import get_storm_instance
+from iterfzf import iterfzf
+
+config_file = '/home/sj/.ssh/config'
+
+storm_ = get_storm_instance(config_file)
+
+entries = storm_.list_entries()
+
+
+
+
+
+#%%
 # import os
 # import platform  # For getting the operating system name
 # import subprocess  # For executing a shell command
@@ -65,30 +79,6 @@
 #
 #
 #     print(result)
-#
-#
-#%%
-
-from storm.__main__ import get_storm_instance
-
-config_file = '/home/sj/.ssh/config'
-
-storm_ = get_storm_instance(config_file)
-
-host = storm_.search_host("m1")
-print(host)
-
-
-#%%
-
-res = [(0, '11'), (2, '22')]
-
-for r in res:
-    print(r[1])
-
-
-#%%
-#
 #
 #
 #
