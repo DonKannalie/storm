@@ -1,126 +1,99 @@
-# import os
-# import platform  # For getting the operating system name
-# import subprocess  # For executing a shell command
-# import re
-#
-# def ping(host, n=None):
-#     """
-#     Returns True if host responds to a ping request
-#     """
-#     n = 1 if n is None else n
-#     param = "-n" if platform.system().lower() == "windows" else "-c"
-#     cmd = f"ping {param} {str(n)} {host}"
-#     print(cmd)
-#     # cmd = ['ping', param, str(n), host]
-#     need_sh = False if platform.system().lower() == "windows" else True
-#     out = subprocess.getstatusoutput(cmd)
-#     return out
-#
-#
-# ips = ['192.168.1.51', '192.168.1.99']
-#
-# for ip in ips:
-#     result = ping(ip, n=3)
-#     print(result)
-#     # if "Unreachable" in result:
-#     #     print("not reached")
-#     # else:
-#     #     print("reached")
-#
-#
-# # %%
-# import re
-#
-# res_sh_pos = 'PING 192.168.1.51 (192.168.1.51) 56(84) bytes of data.\n64 bytes from 192.168.1.51: icmp_seq=1 ttl=127 time=0.206 ms\n\n--- 192.168.1.51 ping statistics ---\n1 packets transmitted, 1 received, 0% packet loss, time 0ms\nrtt min/avg/max/mdev = 0.206/0.206/0.206/0.000 ms'
-#
-# res_sh_neg = 'PING 192.168.1.99 (192.168.1.99) 56(84) bytes of data.\nFrom 192.168.1.51 icmp_seq=1 Destination Host Unreachable\n\n--- 192.168.1.99 ping statistics ---\n1 packets transmitted, 0 received, +1 errors, 100% packet loss, time 0ms\n'
-#
-# res_win_pos = '\nPinging 192.168.1.51 with 32 bytes of data:\nReply from 192.168.1.51: bytes=32 time<1ms TTL=128\n\nPing statistics for 192.168.1.51:\n    Packets: Sent = 1, Received = 1, Lost = 0 (0% loss),\nApproximate round trip times in milli-seconds:\n    Minimum = 0ms, Maximum = 0ms, Average = 0ms'
-#
-# res_win_neg = '\nPinging 192.168.1.99 with 32 bytes of data:\nReply from 192.168.1.51: Destination host unreachable.\n\nPing statistics for 192.168.1.99:\n    Packets: Sent = 1, Received = 1, Lost = 0 (0% loss),'
-#
-# ress = [res_sh_pos, res_sh_neg, res_win_pos, res_win_neg]
-#
-#
-#
-#
-#
-#
-# #%%
-#
-# for res in ress:
-#     result = {'status': False, 'sent': '', 'received': '', 'lost': '', 'loss': ''}
-#     print("*" * 80)
-#     # print(res)
-#     failed = re.findall(r".*([U|u]nreachable).*", res, re.MULTILINE)
-#
-#
-#     if failed:
-#         result['status'] = False
-#     else:
-#         result['status'] = True
-#
-#     print(re.search('Sent = (\d+?),.*', res))
-#
-#
-#
-#     print(result)
-#
-#
-#%%
-
 from storm.__main__ import get_storm_instance
+from storm import Storm
+from iterfzf import iterfzf
+
+import tempfile
+import os
 
 config_file = '/home/sj/.ssh/config'
 
-storm_ = get_storm_instance(config_file)
+storm_ = Storm(config_file)
 
-host = storm_.search_host("m1")
-print(host)
+entries = storm_.list_entries()
+print(entries)
 
+ping_list = []
+for entry in entries:
+    ping_list.append(entry['host'])
 
-#%%
-
-res = [(0, '11'), (2, '22')]
-
-for r in res:
-    print(r[1])
+print(ping_list)
 
 
-#%%
+iterfzf(ping_list)
+
+#
+# fzf = FzfPrompt()
+# fzf.prompt(ping_list)
+
+# from paramiko import SSHClient
+# from scp import SCPClient
+# from storm import Storm, get_default
+# from pathlib import Path
+# from storm.__main__ import get_storm_instance
 #
 #
+# # use -c flag for copy-id
+# # copy_cmd scp /path/to/file username@a:/path/to/destination
+#
+# print(Path('.').cwd())
 #
 #
+# class StormTest(Storm):
 #
-# result = {'status': False, 'sent': '', 'received': '', 'lost': '', 'loss': ''}
+#     def search_host_list(self, search_string, exact_search=False):
+#         out = []
+#         result = self.ssh_config.search_host(search_string, exact_search)
+#         if result:
+#             result = result[0]
+#             out.append(result.get("host"))
+#             out.append(result.get("options").get("user", get_default("user", self.defaults)))
+#             out.append(result.get("options").get("hostname", "[hostname_not_specified]"))
+#             out.append(result.get("options").get("port", get_default("port", self.defaults)))
+#         return out
 #
-# status = re.match(b'.*(unreachable).*', res)
-# print(status)
-# if status:
-#     result['status'] = True
-# else:
-#     result['status'] = False
+#     def copy_file(self, file):
+#         print("copy_config")
+#         scp.put(file)
 #
-# res = res_neg
-# packets = re.search(b'.*Packets: (.*)', res)
-# sent = re.search(b'Sent = (\d+?),.*', packets.group(0))
-# result['sent'] = sent.group(1).decode("utf-8")
 #
-# received = re.search(b'Sent = (\d+?),.*', packets.group(0))
-# result['received'] = received.group(1).decode("utf-8")
+# config_file = '/home/sj/.ssh/config'
 #
-# lost = re.search(b'Lost = (\d+?)\s.*', packets.group(0))
-# result['lost'] = lost.group(1).decode("utf-8")
-#
-# loss = re.search(b'\((\d+?)%.*\)', packets.group(0))
-# result['loss'] = loss.group(1).decode("utf-8")
-#
+# storm_ = StormTest(config_file)
+# h = 'home-srv'
+# result = storm_.search_host_list(h, exact_search=False)
 # print(result)
 #
-# if result['status']:
-#     print("reached")
-# else:
-#     print("not reached")
 #
 #
+# ssh = SSHClient()
+# ssh.load_system_host_keys()
+# ssh.connect('192.168.1.130')
+# # ssh.connect(result[2])
+#
+# scp = SCPClient(ssh.get_transport())
+#
+# storm = StormTest()
+#
+# storm.copy_file('./dev/.tmux.config')
+#
+#
+#
+# # TODO: get bash completion with access token
+#
+# # ACCESS_TOKEN='1234567890abcdefghijk'
+# # REPO_DOWNLOAD_URL=$(curl -u "${ACCESS_TOKEN}:" -s https://api.github.com/repos/owner-name/repo-name/releases/latest | \
+# #   awk '/tag_name/ {print "https://api.github.com/repos/owner-name/repo-name/tarball/" substr($2, 2, length($2)-3) ""}'
+# # )
+# #
+# # curl -u "${ACCESS_TOKEN}:" -LkSs "{$REPO_DOWNLOAD_URL}" -o - | tar xzf -
+#
+#
+# # token='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'
+# #
+# #
+# # curl "https://raw.github.com/org/dotfiles/dot_bashrc/file?login=DonKannalie&token=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"
+# #
+# # curl -H 'Authorization: token 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' \
+# #   -H 'Accept: application/vnd.github.v3.raw' \
+# #   -O \
+# #   -L https://api.github.com/repos/DonKannalie/dotfiles/blob/master/dot_bashrc
