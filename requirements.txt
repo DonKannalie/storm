@@ -2,4 +2,3 @@ paramiko
 termcolor
 Flask
 six
-iterfzf

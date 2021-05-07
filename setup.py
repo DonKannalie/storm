@@ -10,7 +10,7 @@ setup(
                             'static/css/themes/storm/*.css', 'static/css/themes/storm/img/*.png',
                             'static/js/*.js', 'static/js/core/*.js', 'static/favicon.ico']},
     include_package_data=True,
-    url='https://github.com/DonKannalie/storm',
+    url='https://github.com/emre/storm',
     license='MIT',
     author='Emre Yilmaz',
     author_email='ohnemir@gmx.de',
