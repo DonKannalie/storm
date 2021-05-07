@@ -484,8 +484,11 @@ def ping_host(name, n=None, config=None, glob=False):
         if ips:
             print(f"Pinging host: {name} with {', '.join(ips)}")
             for ip in ips:
-                output = ping(host_ip=ip, n=n)
-                eval_ping_response(output, name, ip)
+                res = ping(host_ip=ip, n=n)
+                if isinstance(res, tuple):
+                    eval_ping_response(res[1], name, ip)
+                else:
+                    print("DEBUG: the value from ping was not returned as a tuple. Please investigate!")
         else:
             display(f"host: {name} not found", 'error')
 
