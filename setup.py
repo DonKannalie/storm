@@ -25,7 +25,8 @@ setup(
         "termcolor",
         "flask",
         "argparse" if sys.version_info[:2] < (2, 7) else None,
-        "six"
+        "six",
+        "iterfzf"
     ])),
     classifiers=[
         'Development Status :: 5 - Production/Stable',

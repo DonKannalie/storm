@@ -17,7 +17,7 @@ import colorama
 import subprocess
 import sys
 import re
-# from iterfzf import iterfzf
+from iterfzf import iterfzf
 
 
 colorama.init()
