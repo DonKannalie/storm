@@ -9,7 +9,7 @@ from shutil import copyfile
 from .parsers.ssh_config_parser import ConfigParser
 from .defaults import get_default
 
-__version__ = '0.8.1'
+__version__ = '0.7.24'
 
 ERRORS = {
     "already_in": "{0} is already in your sshconfig. "
@@ -112,7 +112,7 @@ class Storm(object):
     # def _search_host(self, search_string):
     #     return self.ssh_config.search_host(search_string)
 
-    def search_host(self, search_string, exact_search=False, pretty=True):
+    def search_host(self, search_string, exact_search=False):
         results = self.ssh_config.search_host(search_string, exact_search)
         formatted_results = []
         for host_entry in results:
@@ -149,7 +149,7 @@ class Storm(object):
                 if '=' in custom_option:
                     key, value = custom_option.split("=")
 
-                    options.update({key.lower(): value, })
+                    options.update({key.lower(): value,})
         options = self._quote_options(options)
 
         return options
