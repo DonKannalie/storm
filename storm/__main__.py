@@ -24,6 +24,14 @@ from typing import Iterable
 colorama.init()
 
 
+class InvalidValueError(Exception):
+    """Raised on invalid value exception."""
+
+    def __init__(self):
+        self.message = 'invalid value: "@" cannot be used in name.'
+        super().__init__()
+
+
 def display(message, code_type):
     if type == 'error':
         print(get_formatted_message(message, code_type), file=sys.stderr)
@@ -97,7 +105,7 @@ def add(name, connection_uri, id_file="", o=None, config=None):
 
         # validate name
         if '@' in name:
-            raise ValueError('invalid value: "@" cannot be used in name.')
+            raise InvalidValueError
 
         user, host, port = parse(
             connection_uri,
@@ -144,7 +152,7 @@ def clone(name, clone_name, config=None):
 
         # validate name
         if '@' in name:
-            raise ValueError('invalid value: "@" cannot be used in name.')
+            raise InvalidValueError
 
         storm_.clone_entry(name, clone_name)
 
@@ -170,7 +178,7 @@ def move(name, entry_name, config=None):
     try:
 
         if '@' in name:
-            raise ValueError('invalid value: "@" cannot be used in name.')
+            raise InvalidValueError
 
         storm_.clone_entry(name, entry_name, keep_original=False)
 
@@ -266,7 +274,7 @@ def delete(name, config=None):
 
 
 @command('list')
-def list(config=None):
+def list_items(config=None):
     """
     Lists all hosts from ssh config.
     """
@@ -448,6 +456,7 @@ def ping_host(name, n=None, config=None, glob=False):
     if name is None:
         entries = storm_.host_list()
         selected = iterfzf(entries, multi=True)
+        # TODO: refactor this bullshit redundancy
         if selected is None or selected == '':
             display(f"None selected", 'error')
             exit(0)
