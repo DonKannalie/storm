@@ -112,7 +112,7 @@ class Storm(object):
     # def _search_host(self, search_string):
     #     return self.ssh_config.search_host(search_string)
 
-    def search_host(self, search_string, exact_search=False):
+    def search_host(self, search_string, exact_search=False, pretty=True):
         results = self.ssh_config.search_host(search_string, exact_search)
         formatted_results = []
         for host_entry in results:
@@ -149,7 +149,7 @@ class Storm(object):
                 if '=' in custom_option:
                     key, value = custom_option.split("=")
 
-                    options.update({key.lower(): value,})
+                    options.update({key.lower(): value, })
         options = self._quote_options(options)
 
         return options
