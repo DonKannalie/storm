@@ -431,19 +431,14 @@ def ping_host(name, n=None, config=None, glob=False):
     # if glob: search_host, show found hosts name and corr. ip
 
     storm_ = get_storm_instance(config)
-    ips = storm_.get_hostname(name, glob=glob)
-    if ips:
-        print(f"Pinging host: {name} with {', '.join(ips)}")
-        for ip in ips:
-            output = ping(host_ip=ip, n=n)
-            print(output)
-            failed = re.findall(r".*([U|u]nreachable).*", output[1], re.MULTILINE)
-            if failed:
-                print(get_formatted_message(f"host: {name} with {ip} not reached", 'error'), file=sys.stderr)
-            else:
-                print(get_formatted_message(f"host: {name} with {ip} reached", 'success'), file=sys.stderr)
-    else:
-        print(get_formatted_message(f"host: {name} not found", 'error'), file=sys.stderr)
+    entries = storm_.list_entries()
+
+    ping_list = []
+    for entry in entries:
+        ping_list.append(entry['host'])
+
+    iterfzf(ping_list)
+
 # def ping_host(name, n=None, config=None, glob=False):
 #     """
 #     ping host by ip
@@ -451,15 +446,19 @@ def ping_host(name, n=None, config=None, glob=False):
 #     # if glob: search_host, show found hosts name and corr. ip
 #
 #     storm_ = get_storm_instance(config)
-#     entries = storm_.list_entries()
-#
-#     ping_list = []
-#     for entry in entries:
-#         ping_list.append(entry['host'])
-#
-#     iterfzf(ping_list)
-
-
+#     ips = storm_.get_hostname(name, glob=glob)
+#     if ips:
+#         print(f"Pinging host: {name} with {', '.join(ips)}")
+#         for ip in ips:
+#             output = ping(host_ip=ip, n=n)
+#             print(output)
+#             failed = re.findall(r".*([U|u]nreachable).*", output[1], re.MULTILINE)
+#             if failed:
+#                 print(get_formatted_message(f"host: {name} with {ip} not reached", 'error'), file=sys.stderr)
+#             else:
+#                 print(get_formatted_message(f"host: {name} with {ip} reached", 'success'), file=sys.stderr)
+#     else:
+#         print(get_formatted_message(f"host: {name} not found", 'error'), file=sys.stderr)
 
 
 # TODO: add
