@@ -5,25 +5,21 @@ from iterfzf import iterfzf
 import tempfile
 import os
 
-from storm import __version__
+config_file = '/home/sj/.ssh/config'
 
-print(__version__)
+storm_ = Storm(config_file)
 
-# config_file = '/home/sj/.ssh/config'
-#
-# storm_ = Storm(config_file)
-#
-# entries = storm_.list_entries()
-# print(entries)
-#
-# ping_list = []
-# for entry in entries:
-#     ping_list.append(entry['host'])
-#
-# print(ping_list)
-#
-#
-# iterfzf(ping_list)
+entries = storm_.list_entries()
+print(entries)
+
+ping_list = []
+for entry in entries:
+    ping_list.append(entry['host'])
+
+print(ping_list)
+
+
+iterfzf(ping_list)
 
 #
 # fzf = FzfPrompt()
