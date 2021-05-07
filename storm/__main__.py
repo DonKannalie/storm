@@ -73,9 +73,13 @@ def ping(host_ip, n=None):
 
 
 def eval_ping_response(ping_result, name, ip):
+    print(f"type ping_result: {type(ping_result)}")
     packets = re.search(r'.*[P|p]ackets:? (.*)', ping_result).group(0)
+    print(f"packets: {packets}")
     received = re.search(r'\d?\s[R|r]eceived(\s=\s\d)?', packets).group(0)
+    print(f"packets: {received}")
     rec = re.search(r'\d', received).group(0)
+    print(f"rec: {rec}")
     if int(rec) == 0:
         display(f"host: {name} with {ip} not reached", 'error')
     else:
