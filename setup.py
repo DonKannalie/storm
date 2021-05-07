@@ -26,6 +26,7 @@ setup(
         "paramiko",
         "termcolor",
         "flask",
+        "colorama",
         "argparse" if sys.version_info[:2] < (2, 7) else None,
         "six",
         "iterfzf"
