@@ -6,7 +6,7 @@ from storm import __version__
 
 setup(
     name='stormssh',
-    version='0.1',
+    version=str(__version__),
     packages=find_packages(),
     package_data={'storm': ['templates/*.html', 'static/css/*.css',
                             'static/css/themes/storm/*.css', 'static/css/themes/storm/img/*.png',
