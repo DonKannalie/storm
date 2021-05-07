@@ -2,3 +2,4 @@ paramiko
 termcolor
 Flask
 six
+colorama
