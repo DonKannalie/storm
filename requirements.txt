@@ -3,4 +3,3 @@ termcolor
 Flask
 six
 colorama
-iterfzf
