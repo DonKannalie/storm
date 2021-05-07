@@ -445,7 +445,6 @@ def ping_host(name=None, n=None, config=None, glob=False):
     storm_ = get_storm_instance(config)
 
     if name is None:
-        print("iterfzf")
         entries = storm_.host_list()
         selected = iterfzf(entries, multi=True)
         if selected is None or selected == '':
@@ -453,11 +452,14 @@ def ping_host(name=None, n=None, config=None, glob=False):
             exit(0)
         elif isinstance(selected, str):
             name, ip = selected.split('>>>')
+            name = name.strip()
+            ip = ip.strip()
             res = ping(ip)
             eval_ping_response(res, name, ip)
         elif isinstance(selected, Iterable):
             for entry in selected:
                 name, ip = entry.split('>>>')
+                name = name.strip()
                 res = ping(ip)
                 if isinstance(res, tuple):
                     eval_ping_response(res[1], name, ip)
