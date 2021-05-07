@@ -1,13 +1,13 @@
-from storm.__main__ import get_storm_instance
-from storm import Storm
-from iterfzf import iterfzf
+# from storm.__main__ import get_storm_instance
+# from storm import Storm
+# from iterfzf import iterfzf
+#
+# import tempfile
+# import os
 
-import tempfile
-import os
-
-from storm import __version__
-
-print(__version__)
+# from storm import __version__
+#
+# print(__version__)
 
 # config_file = '/home/sj/.ssh/config'
 #

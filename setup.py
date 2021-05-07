@@ -10,10 +10,10 @@ setup(
                             'static/css/themes/storm/*.css', 'static/css/themes/storm/img/*.png',
                             'static/js/*.js', 'static/js/core/*.js', 'static/favicon.ico']},
     include_package_data=True,
-    url='https://github.com/emre/storm',
+    url='http://github.com/emre/storm',
     license='MIT',
     author='Emre Yilmaz',
-    author_email='ohnemir@gmx.de',
+    author_email='mail@emreyilmaz.me',
     description='Management commands to ssh config files.',
     entry_points={
         'console_scripts': [
@@ -25,7 +25,7 @@ setup(
         "termcolor",
         "flask",
         "argparse" if sys.version_info[:2] < (2, 7) else None,
-        "six"
+        "six",
     ])),
     classifiers=[
         'Development Status :: 5 - Production/Stable',
