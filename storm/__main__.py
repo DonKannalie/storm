@@ -24,6 +24,13 @@ from typing import Iterable
 colorama.init()
 
 
+def display(message, code_type):
+    if type == 'error':
+        print(get_formatted_message(message, code_type), file=sys.stderr)
+    else:
+        print(get_formatted_message(message, code_type))
+
+
 def get_storm_instance(config_file=None):
     return Storm(config_file)
 
@@ -57,19 +64,14 @@ def ping(host_ip, n=None):
     return out
 
 
-def ping_response(ping_result, name, ip):
-    failed = re.findall(r".*([U|u]nreachable).*", ping_result[1], re.MULTILINE)
-    if failed:
-        print(get_formatted_message(f"host: {name} with {ip} not reached", 'error'), file=sys.stderr)
+def eval_ping_response(ping_result, name, ip):
+    packets = re.search(r'.*[P|p]ackets:? (.*)', ping_result).group(0)
+    received = re.search(r'\d?\s[R|r]eceived(\s=\s\d)?', packets).group(0)
+    rec = re.search(r'\d', received).group(0)
+    if int(rec) == 0:
+        display(f"host: {name} with {ip} not reached", 'error')
     else:
-        print(get_formatted_message(f"host: {name} with {ip} reached", 'success'), file=sys.stderr)
-
-
-def display(message, code_type):
-    if type == 'error':
-        print(get_formatted_message(message, code_type), file=sys.stderr)
-    else:
-        print(get_formatted_message(message, code_type))
+        display(f"host: {name} with {ip} reached", 'success')
 
 
 @command('version')
@@ -452,20 +454,22 @@ def ping_host(name=None, n=None, config=None, glob=False):
         elif isinstance(selected, str):
             name, ip = selected.split('>>>')
             res = ping(ip)
-            ping_response(res, name, ip)
+            eval_ping_response(res, name, ip)
         elif isinstance(selected, Iterable):
-            print("list")
             for entry in selected:
                 name, ip = entry.split('>>>')
                 res = ping(ip)
-                ping_response(res, name, ip)
+                if isinstance(res, tuple):
+                    eval_ping_response(res[1], name, ip)
+                else:
+                    print("DEBUG: the value from ping was not returned as a tuple. Please investigate!")
     else:
         ips = storm_.get_hostname(name, glob=glob)
         if ips:
             print(f"Pinging host: {name} with {', '.join(ips)}")
             for ip in ips:
                 output = ping(host_ip=ip, n=n)
-                ping_response(output, name, ip)
+                eval_ping_response(output, name, ip)
         else:
             display(f"host: {name} not found", 'error')
 
