@@ -19,6 +19,7 @@ import sys
 import re
 
 from iterfzf import iterfzf
+from typing import Iterable
 
 colorama.init()
 
@@ -54,6 +55,21 @@ def ping(host_ip, n=None):
     cmd = f"ping {param} {str(n)} {host_ip}"
     out = subprocess.getstatusoutput(cmd)
     return out
+
+
+def ping_response(ping_result, name, ip):
+    failed = re.findall(r".*([U|u]nreachable).*", ping_result[1], re.MULTILINE)
+    if failed:
+        print(get_formatted_message(f"host: {name} with {ip} not reached", 'error'), file=sys.stderr)
+    else:
+        print(get_formatted_message(f"host: {name} with {ip} reached", 'success'), file=sys.stderr)
+
+
+def display(message, code_type):
+    if type == 'error':
+        print(get_formatted_message(message, code_type), file=sys.stderr)
+    else:
+        print(get_formatted_message(message, code_type))
 
 
 @command('version')
@@ -98,7 +114,7 @@ def add(name, connection_uri, id_file="", o=None, config=None):
                     'success')
             )
         except Exception as error:
-            print(get_formatted_message(error, 'error'), file=sys.stderr)
+            display(error, 'error')
             sys.exit(1)
 
         print(
@@ -109,7 +125,7 @@ def add(name, connection_uri, id_file="", o=None, config=None):
         )
 
     except ValueError as error:
-        print(get_formatted_message(error, 'error'), file=sys.stderr)
+        display(error, 'error')
         sys.exit(1)
 
     # _copy_id(name, config=None)
@@ -138,7 +154,7 @@ def clone(name, clone_name, config=None):
         )
 
     except ValueError as error:
-        print(get_formatted_message(error, 'error'), file=sys.stderr)
+        display(error, 'error')
         sys.exit(1)
 
 
@@ -166,7 +182,7 @@ def move(name, entry_name, config=None):
         )
 
     except ValueError as error:
-        print(get_formatted_message(error, 'error'), file=sys.stderr)
+        display(error, 'error')
         sys.exit(1)
 
 
@@ -195,7 +211,7 @@ def edit(name, connection_uri, id_file="", o=None, config=None):
                 name
             ), 'success'))
     except ValueError as error:
-        print(get_formatted_message(error, 'error'), file=sys.stderr)
+        display(error, 'error')
         sys.exit(1)
 
 
@@ -224,7 +240,7 @@ def update(name, connection_uri="", id_file="", o=None, config=None):
                 name
             ), 'success'))
     except ValueError as error:
-        print(get_formatted_message(error, 'error'), file=sys.stderr)
+        display(error, 'error')
         sys.exit(1)
 
 
@@ -243,7 +259,7 @@ def delete(name, config=None):
                 'success')
         )
     except ValueError as error:
-        print(get_formatted_message(error, 'error'), file=sys.stderr)
+        display(error, 'error')
         sys.exit(1)
 
 
@@ -323,9 +339,9 @@ def list(config=None):
                     result_stack = result_stack[0:-1] + "\n"
 
         result += result_stack
-        print(get_formatted_message(result, ""))
+        display(result, "")
     except Exception as error:
-        print(get_formatted_message(str(error), ''), file=sys.stderr)
+        display(str(error), '')
         sys.exit(1)
 
 
@@ -347,7 +363,7 @@ def search(search_text, config=None):
             message += "".join(results)
             print(message)
     except Exception as error:
-        print(get_formatted_message(str(error), 'error'), file=sys.stderr)
+        display(str(error), 'error')
         sys.exit(1)
 
 
@@ -360,9 +376,9 @@ def delete_all(config=None):
 
     try:
         storm_.delete_all_entries()
-        print(get_formatted_message('all entries deleted.', 'success'))
+        display('all entries deleted.', 'success')
     except Exception as error:
-        print(get_formatted_message(str(error), 'error'), file=sys.stderr)
+        display(str(error), 'error')
         sys.exit(1)
 
 
@@ -375,7 +391,7 @@ def backup(target_file, config=None):
     try:
         storm_.backup(target_file)
     except Exception as error:
-        print(get_formatted_message(str(error), 'error'), file=sys.stderr)
+        display(str(error), 'error')
         sys.exit(1)
 
 
@@ -402,7 +418,7 @@ def get_ip(name, glob=False, con=False, config=None):
 
     if hostname and isinstance(hostname, list):
         for host in hostname:
-            print(get_formatted_message(host, 'success'), file=sys.stderr)
+            display(host, 'success')
 
 
 @command('copy-id')
@@ -418,34 +434,41 @@ def copy_ids(name, config=None):
 @command('ping')
 # @arg('glob', action='store_true', default=False)
 @arg('n', type=int, default=1)
-def ping_host(n=None, config=None, glob=False):
+def ping_host(name=None, n=None, config=None, glob=False):
+    """
+    ping host by ip
+    """
+    # if glob: search_host, show found hosts name and corr. ip
+
     storm_ = get_storm_instance(config)
-    entries = storm_.list_entries()
-    ping_list = []
-    for entry in entries:
-        ping_list.append(entry['host'])
 
-    iterfzf(ping_list)
+    if name is None:
+        print("iterfzf")
+        entries = storm_.host_list()
+        selected = iterfzf(entries, multi=True)
+        if selected is None or selected == '':
+            display(f"None selected", 'error')
+            exit(0)
+        elif isinstance(selected, str):
+            name, ip = selected.split('>>>')
+            res = ping(ip)
+            ping_response(res, name, ip)
+        elif isinstance(selected, Iterable):
+            print("list")
+            for entry in selected:
+                name, ip = entry.split('>>>')
+                res = ping(ip)
+                ping_response(res, name, ip)
+    else:
+        ips = storm_.get_hostname(name, glob=glob)
+        if ips:
+            print(f"Pinging host: {name} with {', '.join(ips)}")
+            for ip in ips:
+                output = ping(host_ip=ip, n=n)
+                ping_response(output, name, ip)
+        else:
+            display(f"host: {name} not found", 'error')
 
-    # """
-    # ping host by ip
-    # """
-    # # if glob: search_host, show found hosts name and corr. ip
-    #
-    # storm_ = get_storm_instance(config)
-    # ips = storm_.get_hostname(name, glob=glob)
-    # if ips:
-    #     print(f"Pinging host: {name} with {', '.join(ips)}")
-    #     for ip in ips:
-    #         output = ping(host_ip=ip, n=n)
-    #         print(output)
-    #         failed = re.findall(r".*([U|u]nreachable).*", output[1], re.MULTILINE)
-    #         if failed:
-    #             print(get_formatted_message(f"host: {name} with {ip} not reached", 'error'), file=sys.stderr)
-    #         else:
-    #             print(get_formatted_message(f"host: {name} with {ip} reached", 'success'), file=sys.stderr)
-    # else:
-    #     print(get_formatted_message(f"host: {name} not found", 'error'), file=sys.stderr)
 
 # TODO: add create-config function; remove from parsers/get_storm_config()
 # TODO: add add-alias function, etc.
@@ -466,14 +489,14 @@ def ping_host(n=None, config=None, glob=False):
 #             """
 #             from storm.ssh_rainmeter import main as rainmeter
 #             rainmeter()
-#             print(get_formatted_message("Rainmeter config has been refreshed", 'success'))
+#             display("Rainmeter config has been refreshed", 'success')
 # else:
 #     @command('refresh')
 #     def refresh():
 #         """
 #         Refresh conky config.
 #         """
-#         print(get_formatted_message("Conky config not implemented yet", 'error'))
+#         display("Conky config not implemented yet", 'error')
 
 if __name__ == '__main__':
     sys.exit(main())

@@ -1,11 +1,58 @@
-from storm.__main__ import get_storm_instance
-from iterfzf import iterfzf
+from importlib import reload
+import storm
+reload(storm)
+import re
+from storm import Storm
+# from iterfzf import iterfzf
+from storm.utils import get_formatted_message
+from storm.__main__ import ping
 
 config_file = '/home/sj/.ssh/config'
 
-storm_ = get_storm_instance(config_file)
+storm_ = Storm(config_file)
 
-entries = storm_.list_entries()
+entries = storm_.host_list()
+
+print(entries)
+# res = iterfzf(entries)
+
+
+#%%
+
+def ping_response(ping_result, name, ip):
+    failed = re.findall(r".*([U|u]nreachable).*", ping_result[1], re.MULTILINE)
+    if failed:
+        print(get_formatted_message(f"host: {name} with {ip} not reached", 'error'), file=sys.stderr)
+    else:
+        print(get_formatted_message(f"host: {name} with {ip} reached", 'success'), file=sys.stderr)
+
+# res = 'beast >>> 10.161.11.52'
+res = ['beast >>> 10.161.11.52', 'cm2 >>> 172.18.1.32', 'g1 >>> 10.161.100.10']
+# res = ''
+if res is None or res is '':
+    print("empty")
+elif isinstance(res, str):
+    print("str")
+elif isinstance(res, list):
+    print("list")
+
+
+#%%
+
+name, ip = res.split('>>>')
+ip = res.split('>>>')[1]
+
+resp = (1, 'PING 10.161.11.52 (10.161.11.52) 56(84) bytes of data.\n\n--- 10.161.11.52 ping statistics ---\n1 packets transmitted, 0 received, 100% packet loss, time 0ms\n')
+
+ping_response(resp, name, ip)
+
+
+# ping_list = []
+# for entry in entries:
+#     ping_list.append(entry['host'])
+
+# print(ping_list)
+
 
 
 

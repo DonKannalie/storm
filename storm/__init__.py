@@ -104,6 +104,15 @@ class Storm(object):
             config_data = sorted(config_data, key=itemgetter("host"))
         return config_data
 
+    def host_list(self):
+        config_data = self.ssh_config.config_data
+
+        host_list = []
+        for host_entry in config_data:
+            if host_entry.get("type") == 'entry' and host_entry.get("host") != '*':
+                host_list.append(f"{host_entry.get('host')} >>> {host_entry.get('options').get('hostname')}")
+        return host_list
+
     def delete_all_entries(self):
         self.ssh_config.delete_all_hosts()
 
@@ -149,7 +158,7 @@ class Storm(object):
                 if '=' in custom_option:
                     key, value = custom_option.split("=")
 
-                    options.update({key.lower(): value,})
+                    options.update({key.lower(): value, })
         options = self._quote_options(options)
 
         return options
