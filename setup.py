@@ -28,7 +28,6 @@ setup(
         "colorama",
         "argparse" if sys.version_info[:2] < (2, 7) else None,
         "six",
-        "iterfzf"
     ])),
     classifiers=[
         'Development Status :: 5 - Production/Stable',
