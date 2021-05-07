@@ -1,11 +1,10 @@
 import sys
-from storm import __version__
 
 from setuptools import setup, find_packages
 
 setup(
     name='stormssh',
-    version=__version__,
+    version='0.7.24',
     packages=find_packages(),
     package_data={'storm': ['templates/*.html', 'static/css/*.css',
                             'static/css/themes/storm/*.css', 'static/css/themes/storm/img/*.png',
