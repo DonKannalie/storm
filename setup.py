@@ -2,9 +2,11 @@ import sys
 
 from setuptools import setup, find_packages
 
+from storm import __version__
+
 setup(
     name='stormssh',
-    version='0.7.0',
+    version=__version__,
     packages=find_packages(),
     package_data={'storm': ['templates/*.html', 'static/css/*.css',
                             'static/css/themes/storm/*.css', 'static/css/themes/storm/img/*.png',
@@ -12,8 +14,8 @@ setup(
     include_package_data=True,
     url='https://github.com/DonKannalie/storm',
     license='MIT',
-    author='Emre Yilmaz',
-    author_email='mail@emreyilmaz.me',
+    author='Jonas Kahlen',
+    author_email='ohnemir@gmx.de',
     description='Management commands to ssh config files.',
     entry_points={
         'console_scripts': [
