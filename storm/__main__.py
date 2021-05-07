@@ -418,7 +418,7 @@ def copy_ids(name, config=None):
 @command('ping')
 # @arg('glob', action='store_true', default=False)
 @arg('n', type=int, default=1)
-def ping_host(name, n=None, config=None, glob=False):
+def ping_host(n=None, config=None, glob=False):
     storm_ = get_storm_instance(config)
     entries = storm_.list_entries()
     ping_list = []
