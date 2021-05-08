@@ -7,12 +7,12 @@ DEFAULT_USER = getpass.getuser()
 
 CONFIG_DATA = {
     "aliases": {
-        "add": ["create", "touch"],
+        "add": ["a", "create"],
         "move": ["mv"],
         "update": ["up"],
         "delete": ["rm"],
-        "list": ["ls", "lst", "show"],
-        "search": ["find"],
+        "list": ["l", "ls"],
+        "search": ["s", "find"],
         "get-ip": ["ip", "gip"],
         "copy-id": ["cid"],
         "ping": ["p"]

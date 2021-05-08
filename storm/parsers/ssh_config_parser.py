@@ -12,7 +12,22 @@ from paramiko.config import SSHConfig
 import six
 
 
+class UnparsableException(Exception):
+    """Rasied on unparable exception"""
+
+    def __init__(self, line):
+        self.msg = 'Unparsable line: %r' % line
+
+    def __str__(self):
+        return self.msg
+
+
 class StormConfig(SSHConfig):
+
+    def __init__(self):
+        self._config = []
+        super().__init__()
+
     def parse(self, file_obj):
         """
         Read an OpenSSH config from the given file object.
@@ -59,7 +74,7 @@ class StormConfig(SSHConfig):
                 while (i < len(line)) and not line[i].isspace():
                     i += 1
                 if i == len(line):
-                    raise Exception('Unparsable line: %r' % line)
+                    raise UnparsableException(line)
                 key = line[:i].lower()
                 value = line[i:].lstrip()
             if key == 'host':
@@ -133,7 +148,7 @@ class ConfigParser(object):
                 })
 
             # minor bug in paramiko.SSHConfig that duplicates
-            #"Host *" entries.
+            # "Host *" entries.
             if entry.get("config") and len(entry.get("config")) > 0:
                 self.config_data.append(host_item)
 
