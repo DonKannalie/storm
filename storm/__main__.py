@@ -23,7 +23,7 @@ from typing import Iterable
 
 colorama.init()
 
-col = Colors
+col = Colors()
 
 
 class InvalidValueError(Exception):
