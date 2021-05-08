@@ -73,13 +73,13 @@ def ping(host_ip, n=None):
 
 
 def eval_ping_response(ping_result, name, ip):
-    print(f"type ping_result: {type(ping_result)}")
+    # print(f"type ping_result: {type(ping_result)}")
     packets = re.search(r'.*[P|p]ackets:? (.*)', ping_result).group(0)
-    print(f"packets: {packets}")
+    # print(f"packets: {packets}")
     received = re.search(r'\d?\s[R|r]eceived(\s=\s\d)?', packets).group(0)
-    print(f"packets: {received}")
+    # print(f"packets: {received}")
     rec = re.search(r'\d', received).group(0)
-    print(f"rec: {rec}")
+    # print(f"rec: {rec}")
     if int(rec) == 0:
         display(f"host: {name} with {ip} not reached", 'error')
     else:
@@ -464,21 +464,21 @@ def ping_host(name, n=None, config=None, glob=False):
         if selected is None or selected == '':
             display(f"None selected", 'error')
             exit(0)
-        elif isinstance(selected, str):
-            name, ip = selected.split('>>>')
+        # elif isinstance(selected, str):
+        #     name, ip = selected.split('>>>')
+        #     name = name.strip()
+        #     ip = ip.strip()
+        #     res = ping(ip)
+        #     eval_ping_response(res, name, ip)
+        # elif isinstance(selected, Iterable):
+        for entry in [selected]:
+            name, ip = entry.split('>>>')
             name = name.strip()
-            ip = ip.strip()
             res = ping(ip)
-            eval_ping_response(res, name, ip)
-        elif isinstance(selected, Iterable):
-            for entry in selected:
-                name, ip = entry.split('>>>')
-                name = name.strip()
-                res = ping(ip)
-                if isinstance(res, tuple):
-                    eval_ping_response(res[1], name, ip)
-                else:
-                    print("DEBUG: the value from ping was not returned as a tuple. Please investigate!")
+            if isinstance(res, tuple):
+                eval_ping_response(res[1], name, ip)
+            else:
+                print("DEBUG: the value from ping was not returned as a tuple. Please investigate!")
     else:
         ips = storm_.get_hostname(name, glob=glob)
         if ips:

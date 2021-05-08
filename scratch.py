@@ -94,11 +94,11 @@ def ping_response(ping_result, name=None, ip=None):
     else:
         print(get_formatted_message(f"host: {name} with {ip} reached", 'success'))
 
-for ip in ['10.161.11.51', 'google.com', '192.168.1.51']:
-    resp = ping(ip)
-    print(resp)
-    ping_response(resp)
-
+for selected in ['10.161.11.51', 'google.com', ['192.168.1.51', '192.168.1.81']]:
+    if selected is None or selected == '':
+        print(f"None selected", 'error')
+    elif isinstance(selected, str):
+        print("")
 
 # for res in resp:
 #     # print(res[1])
