@@ -270,6 +270,8 @@ def list_items(config=None):
                     )
                     if _user == 'root':
                         _col = 'red'
+                    if 'VMUDOMAIN' in 'root':
+                        _col = 'magenta'
                     else:
                         _col = 'white'
 
