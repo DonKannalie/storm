@@ -5,6 +5,7 @@ import subprocess as sp
 from termcolor import colored
 import sys
 
+
 def fixed_width(text, size):
     text_width = len(text)
     if size > text_width:
@@ -12,6 +13,25 @@ def fixed_width(text, size):
             text += " "
 
     return text
+
+
+class Colors:
+    def __init__(self):
+        self.col_user = {'root': 'red', 'VMUDOMAIN': 'magenta'}
+        self.col_host = {'10.161.': 'green', '172.': 'red'}
+        self.default = 'white'
+
+    def user(self, search_for):
+        for k, v in self.col_user.items():
+            if search_for in k:
+                return v
+        return self.default
+
+    def host(self, search_for):
+        for k, v in self.col_host.items():
+            if k in search_for:
+                return v
+        return self.default
 
 
 COLOR_CODES = [
@@ -41,4 +61,3 @@ def get_formatted_message(message, format_type):
         all_message = colored(format_typed.upper(), 'green', attrs=["bold", ])
 
     return all_message + message
-

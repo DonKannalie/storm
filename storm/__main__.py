@@ -7,7 +7,7 @@ from __future__ import print_function
 import builtins
 from storm import Storm
 from storm.parsers.ssh_uri_parser import parse
-from storm.utils import (get_formatted_message, colored)
+from storm.utils import (get_formatted_message, colored, Colors)
 from storm.kommandr import *
 from storm.defaults import get_default
 from storm import __version__
@@ -22,6 +22,8 @@ from iterfzf import iterfzf
 from typing import Iterable
 
 colorama.init()
+
+col = Colors
 
 
 class InvalidValueError(Exception):
@@ -268,21 +270,17 @@ def list_items(config=None):
                     _user = host.get("options").get(
                         "user", get_default("user", storm_.defaults)
                     )
-                    if _user == 'root':
-                        _col = 'red'
-                    elif 'VMUDOMAIN' in _user:
-                        _col = 'magenta'
-                    else:
-                        _col = 'white'
+
+                    _host = host.get("options").get(
+                        "hostname", "[hostname_not_specified]"
+                    )
 
                     result += " {0}\t ->\t {1}@{2}:{3}".format(
                         colored(host["host"], 'green'),  # , attrs=["bold", ]
 
-                        colored(_user, _col),
+                        colored(_user, col.user(_user)),
 
-                        colored(host.get("options").get(
-                            "hostname", "[hostname_not_specified]"
-                        ), 'yellow'),
+                        colored(_host, col.host(_host)),
 
                         colored(host.get("options").get(
                             "port", get_default("port", storm_.defaults)
