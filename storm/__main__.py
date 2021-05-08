@@ -121,22 +121,13 @@ def add(name, connection_uri, id_file="", o=None, config=None):
 
         try:
             ssh_copy_id(name)
-
-            print(
-                get_formatted_message(
-                    'ssh key added to host {0}".'.format(name),
-                    'success')
-            )
+            display(f'ssh key added to host {name}', 'success')
         except Exception as error:
             display(error, 'error')
             sys.exit(1)
 
-        print(
-            get_formatted_message(
-                '{0} added to your ssh config. you can connect '
-                'it by typing "ssh {0}".'.format(name),
-                'success')
-        )
+        display(f'{name} added to your ssh config. '
+                f'\nyou can connect it by typing ssh {name}', 'success')
 
     except ValueError as error:
         display(error, 'error')
@@ -160,12 +151,9 @@ def clone(name, clone_name, config=None):
 
         storm_.clone_entry(name, clone_name)
 
-        print(
-            get_formatted_message(
-                '{0} added to your ssh config. you can connect '
-                'it by typing "ssh {0}".'.format(clone_name),
-                'success')
-        )
+        display(f'{clone_name} added to your ssh config. '
+                f'\nyou can connect it by typing '
+                f'\"ssh {clone_name}\".', 'success')
 
     except ValueError as error:
         display(error, 'error')
@@ -186,14 +174,9 @@ def move(name, entry_name, config=None):
 
         storm_.clone_entry(name, entry_name, keep_original=False)
 
-        print(
-            get_formatted_message(
-                '{0} moved in ssh config. you can '
-                'connect it by typing "ssh {0}".'.format(
-                    entry_name
-                ),
-                'success')
-        )
+        display(f'{entry_name} moved in ssh config. '
+                f'\nyou can connect it by typing '
+                f'\"ssh {0}\".', 'success')
 
     except ValueError as error:
         display(error, 'error')
@@ -220,10 +203,7 @@ def edit(name, connection_uri, id_file="", o=None, config=None):
         )
 
         storm_.edit_entry(name, host, user, port, id_file, o)
-        print(get_formatted_message(
-            '"{0}" updated successfully.'.format(
-                name
-            ), 'success'))
+        display(f'\"{name}\" updated successfully.', 'success')
     except ValueError as error:
         display(error, 'error')
         sys.exit(1)
@@ -249,10 +229,7 @@ def update(name, connection_uri="", id_file="", o=None, config=None):
 
     try:
         storm_.update_entry(name, **settings)
-        print(get_formatted_message(
-            '"{0}" updated successfully.'.format(
-                name
-            ), 'success'))
+        display(f'\"{name}\" updated successfully.', 'success')
     except ValueError as error:
         display(error, 'error')
         sys.exit(1)
@@ -267,11 +244,7 @@ def delete(name, config=None):
 
     try:
         storm_.delete_entry(name)
-        print(
-            get_formatted_message(
-                'hostname "{0}" deleted successfully.'.format(name),
-                'success')
-        )
+        display(f'hostname \"{name}\" deleted successfully.', 'success')
     except ValueError as error:
         display(error, 'error')
         sys.exit(1)

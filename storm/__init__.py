@@ -206,3 +206,5 @@ class Storm(object):
             ))
 
         return formatted_results
+
+    def ping_host(self, ):

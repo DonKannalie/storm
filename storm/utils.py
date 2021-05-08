@@ -3,7 +3,7 @@
 import os
 import subprocess as sp
 from termcolor import colored
-
+import sys
 
 def fixed_width(text, size):
     text_width = len(text)
@@ -37,9 +37,8 @@ def get_formatted_message(message, format_type):
 
     if format_type == 'error':
         all_message = colored(format_typed.upper(), 'red', attrs=["bold", ])
-    if format_type == 'success':
+    elif format_type == 'success':
         all_message = colored(format_typed.upper(), 'green', attrs=["bold", ])
 
     return all_message + message
-
 
