@@ -18,7 +18,7 @@ def fixed_width(text, size):
 class Colors:
     def __init__(self):
         self.col_user = {'root': 'red', 'VMUDOMAIN': 'magenta'}
-        self.col_host = {'10.161.': 'green', '172.': 'red'}
+        self.col_host = {'10.161.': 'yellow', '172.': 'red'}
         self.default = 'white'
 
     def user(self, search_for):

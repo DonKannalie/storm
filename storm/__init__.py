@@ -207,3 +207,5 @@ class Storm(object):
 
         return formatted_results
 
+    def get_padding(self):
+        return self.ssh_config.get_max_length_host()

@@ -262,6 +262,7 @@ def list_items(config=None):
     try:
         result = colored('Listing entries:', 'white', attrs=["bold", ]) + "\n"
         result_stack = ""
+        padding = storm_.get_padding()
         for host in storm_.list_entries(True):
 
             if host.get("type") == 'entry':
@@ -276,7 +277,7 @@ def list_items(config=None):
                     )
 
                     result += " {0}\t ->\t {1}@{2}:{3}".format(
-                        colored(host["host"], 'green'),  # , attrs=["bold", ]
+                        colored(host["host"].ljust(padding), 'green'),  # , attrs=["bold", ]
 
                         colored(_user, col.user(_user)),
 
@@ -419,12 +420,12 @@ def copy_ids(name, config=None):
 
 
 @command('ping')
-# @arg('glob', action='store_true', default=False)
 @arg('name', nargs='?', default=None)
 @arg('n', type=int, default=1)
+# @arg('glob', action='store_true', default=False)
 def ping_host(name=None, n=None, config=None, glob=False):
     """
-    ping host by ip
+    ping host by its ip
     """
     # if glob: search_host, show found hosts name and corr. ip
 

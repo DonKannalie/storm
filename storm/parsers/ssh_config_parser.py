@@ -266,3 +266,11 @@ class ConfigParser(object):
             last_index = max(indexes)
 
         return last_index
+
+    def get_max_length_host(self):
+        max_length = 0
+        for host in self.config_data:
+            len_ = len(host.get('host'))
+            if int(len_) > max_length:
+                max_length = len_
+        return max_length
