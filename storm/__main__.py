@@ -464,21 +464,21 @@ def ping_host(name, n=None, config=None, glob=False):
         if selected is None or selected == '':
             display(f"None selected", 'error')
             exit(0)
-        # elif isinstance(selected, str):
-        #     name, ip = selected.split('>>>')
-        #     name = name.strip()
-        #     ip = ip.strip()
-        #     res = ping(ip)
-        #     eval_ping_response(res, name, ip)
-        # elif isinstance(selected, Iterable):
-        for entry in [selected]:
-            name, ip = entry.split('>>>')
+        elif isinstance(selected, str):
+            name, ip = selected.split('>>>')
             name = name.strip()
+            ip = ip.strip()
             res = ping(ip)
-            if isinstance(res, tuple):
-                eval_ping_response(res[1], name, ip)
-            else:
-                print("DEBUG: the value from ping was not returned as a tuple. Please investigate!")
+            eval_ping_response(res, name, ip)
+        elif isinstance(selected, Iterable):
+            for entry in selected:
+                name, ip = entry.split('>>>')
+                name = name.strip()
+                res = ping(ip)
+                if isinstance(res, tuple):
+                    eval_ping_response(res[1], name, ip)
+                else:
+                    print("DEBUG: the value from ping was not returned as a tuple. Please investigate!")
     else:
         ips = storm_.get_hostname(name, glob=glob)
         if ips:
