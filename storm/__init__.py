@@ -21,6 +21,19 @@ ERRORS = {
 DELETED_SIGN = "DELETED"
 
 
+class ItemExists(Exception):
+    """Raised when item already in config"""
+
+    def __init__(self, name):
+        super().__init__(name)
+
+    @property
+    def msg(self):
+        return self.args[0]
+
+    # f"{name} is already in your sshconfig. \nUse storm edit or storm update to modify."
+
+
 class Storm(object):
 
     def __init__(self, ssh_config_file=None):
