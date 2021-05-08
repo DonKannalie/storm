@@ -449,7 +449,7 @@ def copy_ids(name, config=None):
 # @arg('glob', action='store_true', default=False)
 @arg('name', type=str, default=None)
 @arg('n', type=int, default=1)
-def ping_host(name, n=None, config=None, glob=False):
+def ping_host(name=None, n=None, config=None, glob=False):
     """
     ping host by ip
     """
