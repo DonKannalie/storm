@@ -19,6 +19,7 @@ class Colors:
     def __init__(self):
         self.col_user = {'root': 'red', 'VMUDOMAIN': 'magenta'}
         self.col_host = {'10.161.': 'yellow', '172.': 'red'}
+        self.col_port = {'22': 'cyan'}
         self.default = 'white'
 
     def user(self, search_for):
@@ -33,6 +34,12 @@ class Colors:
                 return v
         return self.default
 
+    def port(self, search_for):
+        for k, v in self.col_port.items():
+            if search_for == k:
+                return self.default
+            else:
+                return v
 
 COLOR_CODES = [
     "\x1b[1m",

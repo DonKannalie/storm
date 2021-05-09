@@ -276,6 +276,10 @@ def list_items(config=None):
                         "hostname", "[hostname_not_specified]"
                     )
 
+                    _port = host.get("options").get(
+                        "port", get_default("port", storm_.defaults)
+                    )
+
                     result += " {0}\t ->\t {1}@{2}:{3}".format(
                         colored(host["host"].ljust(padding), 'green'),  # , attrs=["bold", ]
 
@@ -283,9 +287,7 @@ def list_items(config=None):
 
                         colored(_host, col.host(_host)),
 
-                        colored(host.get("options").get(
-                            "port", get_default("port", storm_.defaults)
-                        ), 'cyan')
+                        colored(_port, col.port(_port))
                     )
 
                     extra = False
