@@ -280,15 +280,23 @@ def list_items(config=None):
                         "port", get_default("port", storm_.defaults)
                     )
 
-                    result += " {0}\t ->\t {1}@{2}:{3}".format(
-                        colored(host["host"].ljust(padding), 'green'),  # , attrs=["bold", ]
+                    result += f"{colored(host['host'].ljust(padding), 'green')}" \
+                              f"\t->\t" \
+                              f"{colored(_user, col.user(_user))}" \
+                              f"{colored('@', 'green')}" \
+                              f"{colored(_host, col.host(_host))}" \
+                              f"{colored(':', 'green')}" \
+                              f"{colored(_port, col.port(_port))}"
 
-                        colored(_user, col.user(_user)),
-
-                        colored(_host, col.host(_host)),
-
-                        colored(_port, col.port(_port))
-                    )
+                    # result += " {0}\t ->\t {1}@{2}:{3}".format(
+                    #     colored(host["host"].ljust(padding), 'green'),  # , attrs=["bold", ]
+                    #
+                    #     colored(_user, col.user(_user)),
+                    #
+                    #     colored(_host, col.host(_host)),
+                    #
+                    #     colored(_port, col.port(_port))
+                    # )
 
                     extra = False
                     for key, value in six.iteritems(host.get("options")):
