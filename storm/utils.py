@@ -14,7 +14,7 @@ def fixed_width(text, size):
 
     return text
 
-
+# TODO: not working for VMUDOMAIN
 class Colors:
     def __init__(self):
         self.col_user = {'root': 'red', 'VMUDOMAIN': 'magenta'}
