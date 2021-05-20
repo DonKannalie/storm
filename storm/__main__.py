@@ -466,6 +466,12 @@ def ping_host(name=None, n=None, config=None, glob=False):
         else:
             display(f"host: {name} not found", 'error')
 
+# TODO: 'check' command: ssh command to host
+# free -h
+# uptime
+# w or w --ip-addr
+# cat /proc/net/tcp | wc -l
+# optional: ps auxf
 
 # TODO: add create-config function; remove from parsers/get_storm_config()
 # TODO: add add-alias function, etc.
