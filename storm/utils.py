@@ -5,7 +5,7 @@ import subprocess as sp
 from termcolor import colored
 import sys
 
-from defaults import col_dict
+from storm.defaults import col_dict
 
 
 def fixed_width(text, size):
