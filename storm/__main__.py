@@ -406,7 +406,7 @@ def get_ip(name, glob=False, con=False, config=None):
 
     if hostname and isinstance(hostname, list):
         for host in hostname:
-            display(host, 'success')
+            print(host)
 
 
 @command('copy-id')
