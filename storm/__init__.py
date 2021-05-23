@@ -221,8 +221,10 @@ class Storm(object):
 
         [ip] = self.get_hostname(name, glob=False)
         if mac and ip:
-            print(send_magic_packet(mac, ip_address=ip))
+            print(f"wol {ip} {mac}")
+            send_magic_packet(mac, ip_address=ip)
         elif mac:
+            print(f"wol {mac}")
             send_magic_packet(mac)
         else:
             print("DEBUG: formulate a appropriate message here")
