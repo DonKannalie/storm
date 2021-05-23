@@ -14,7 +14,7 @@ def fixed_width(text, size):
 
     return text
 
-# TODO: not working for VMUDOMAIN
+
 class Colors:
     def __init__(self):
         self.col_user = {'root': 'red', 'VMUDOMAIN': 'magenta'}
@@ -22,17 +22,17 @@ class Colors:
         self.col_port = {'22': 'cyan'}
         self.default = 'white'
 
-    def user(self, search_for):
-        for k, v in self.col_user.items():
-            if search_for in k:
+    def _get_color(self, search_for, dict_type):
+        for k, v in dict_type.items():
+            if search_for.startswith(k):
                 return v
         return self.default
 
+    def user(self, search_for):
+        return self._get_color(search_for=search_for, dict_type=self.col_user)
+
     def host(self, search_for):
-        for k, v in self.col_host.items():
-            if k in search_for:
-                return v
-        return self.default
+        return self._get_color(search_for=search_for, dict_type=self.col_host)
 
     def port(self, search_for):
         for k, v in self.col_port.items():
@@ -40,6 +40,7 @@ class Colors:
                 return self.default
             else:
                 return v
+
 
 COLOR_CODES = [
     "\x1b[1m",
