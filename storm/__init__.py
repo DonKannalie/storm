@@ -209,3 +209,17 @@ class Storm(object):
 
     def get_padding(self):
         return self.ssh_config.get_max_length_host()
+
+    def wake(self, name):
+        from pathlib import Path
+        from wakeonlan import send_magic_packet
+        maclist = Path('~').expanduser().joinpath('.config/stormssh/maclist')
+        mac = maclist[name]
+        print(mac)
+        [ip] = self.get_hostname(name, glob=False)
+        if mac and ip:
+            send_magic_packet(mac, ip_address=ip)
+        elif mac:
+            send_magic_packet(mac)
+        else:
+            print("DEBUG: formulate a appropriate message here")

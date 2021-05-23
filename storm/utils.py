@@ -5,6 +5,8 @@ import subprocess as sp
 from termcolor import colored
 import sys
 
+from defaults import col_dict
+
 
 def fixed_width(text, size):
     text_width = len(text)
@@ -17,10 +19,10 @@ def fixed_width(text, size):
 
 class Colors:
     def __init__(self):
-        self.col_user = {'root': 'red', 'VMUDOMAIN': 'magenta'}
-        self.col_host = {'10.161.': 'yellow', '172.': 'red'}
-        self.col_port = {'22': 'cyan'}
-        self.default = 'white'
+        self.col_user = col_dict['col_user']
+        self.col_host = col_dict['col_host']
+        self.col_port = col_dict['col_port']
+        self.default = col_dict['default']
 
     def _get_color(self, search_for, dict_type):
         for k, v in dict_type.items():

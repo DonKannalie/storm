@@ -466,6 +466,13 @@ def ping_host(name=None, n=None, config=None, glob=False):
         else:
             display(f"host: {name} not found", 'error')
 
+
+@command('wake')
+def wake_host(name, config=None):
+    storm_ = get_storm_instance(config)
+    storm_.wake(name)
+
+
 # TODO: 'check' command: ssh command to host
 # free -h
 # uptime

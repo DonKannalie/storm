@@ -19,6 +19,13 @@ CONFIG_DATA = {
     }
 }
 
+col_dict = {
+    "col_user": {'root': 'red', 'admin': 'red', 'VMUDOMAIN': 'magenta'},
+    "col_host": {'10.161.': 'yellow', '172.': 'red'},
+    "col_port": {'22': 'cyan'},
+    "default": 'white'
+}
+
 
 def get_default(key, defaults={}):
     if key == 'port':
