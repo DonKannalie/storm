@@ -214,14 +214,14 @@ class Storm(object):
         import json
         from pathlib import Path
         from wakeonlan import send_magic_packet
-
+        # TODO: implement this properly!
         maclist = Path('~').expanduser().joinpath('.config/stormssh/maclist')
         with open(maclist, 'r') as maclist_:
             mac = json.loads(maclist_.read())[name]
 
         [ip] = self.get_hostname(name, glob=False)
         if mac and ip:
-            send_magic_packet(mac, ip_address=ip)
+            print(send_magic_packet(mac, ip_address=ip))
         elif mac:
             send_magic_packet(mac)
         else:
