@@ -214,8 +214,9 @@ class Storm(object):
         from pathlib import Path
         from wakeonlan import send_magic_packet
         maclist = Path('~').expanduser().joinpath('.config/stormssh/maclist')
-        mac = maclist[name]
-        print(mac)
+        with open(maclist, 'r') as maclist_:
+            mac = maclist_[name]
+
         [ip] = self.get_hostname(name, glob=False)
         if mac and ip:
             send_magic_packet(mac, ip_address=ip)
