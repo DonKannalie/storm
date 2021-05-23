@@ -211,11 +211,13 @@ class Storm(object):
         return self.ssh_config.get_max_length_host()
 
     def wake(self, name):
+        import json
         from pathlib import Path
         from wakeonlan import send_magic_packet
+
         maclist = Path('~').expanduser().joinpath('.config/stormssh/maclist')
         with open(maclist, 'r') as maclist_:
-            mac = maclist_.read()[name]
+            mac = json.loads(maclist_.read())[name]
 
         [ip] = self.get_hostname(name, glob=False)
         if mac and ip:
