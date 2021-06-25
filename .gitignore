@@ -41,4 +41,7 @@ nosetests.xml
 .vagrant/*
 
 # direnv
-/.envrc
+.envrc
+
+scratch*.py
+storm-dev

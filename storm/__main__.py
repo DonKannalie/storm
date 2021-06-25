@@ -420,18 +420,19 @@ def copy_ids(name, config=None):
 
 
 @command('ping')
-@arg('name', nargs='?', default=None)
+@arg('name', nargs='*', default=None)
 @arg('n', type=int, default=1)
-# @arg('glob', action='store_true', default=False)
-def ping_host(name=None, n=None, config=None, glob=False):
+@arg('glob', action='store_true', default=False)
+def ping_host(name, n=None, config=None, glob=True):
     """
     ping host by its ip
     """
-    # if glob: search_host, show found hosts name and corr. ip
+    ## work-around for
+    lastarg = sys.argv[-1]
 
     storm_ = get_storm_instance(config)
 
-    if name is None:
+    if lastarg == 'ping':
         entries = storm_.host_list()
         selected = iterfzf(entries, multi=True)
         # TODO: refactor this bullshit redundancy
@@ -454,7 +455,10 @@ def ping_host(name=None, n=None, config=None, glob=False):
                 else:
                     print("DEBUG: the value from ping was not returned as a tuple. Please investigate!")
     else:
+        ## todo: add option for multiple hosts added. now only
+        [name] = name
         ips = storm_.get_hostname(name, glob=glob)
+        print(ips)
         if ips:
             print(f"Pinging host: {name} with {', '.join(ips)}")
             for ip in ips:
@@ -469,8 +473,27 @@ def ping_host(name=None, n=None, config=None, glob=False):
 
 @command('wake')
 def wake_host(name, config=None):
+    """
+    Wake a host from the list specified in ~/.config/stormssh/maclist
+    format json:
+    <server>: <mac_address>
+    "server": "xx:xx:xx:xx:xx:xx"
+    """
     storm_ = get_storm_instance(config)
-    storm_.wake(name)
+    res = storm_.wake(name)
+    if not res:
+
+        exit()
+
+
+@command('create-config')
+def create_config():
+    """
+    Create storm config ~/.config/stormssh/config
+    You can apply aliases here
+    """
+    from parsers.storm_config_parser import create_storm_config
+    create_storm_config()
 
 
 # TODO: 'check' command: ssh command to host

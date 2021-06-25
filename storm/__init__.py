@@ -216,6 +216,12 @@ class Storm(object):
         from wakeonlan import send_magic_packet
         # TODO: implement this properly!
         maclist = Path('~').expanduser().joinpath('.config/stormssh/maclist')
+
+        if not maclist.exists:
+            print(f"Could not find ~/.config/stormssh/maclist."
+                  f"This file is not automatically created."
+                  f"See 'storm --help' for more info")
+
         with open(maclist, 'r') as maclist_:
             mac = json.loads(maclist_.read())[name]
 
