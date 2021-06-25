@@ -1,6 +1,5 @@
 paramiko
 termcolor
-Flask
 six
 colorama
 iterfzf

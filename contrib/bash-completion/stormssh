@@ -22,7 +22,8 @@ __stormssh(){
                   $storm_command = delete_all ||
                   $storm_command = get_ip ||
                   $storm_command = copy_ids ||
-                  $storm_command = ping ]]; then
+                  $storm_command = ping ||
+                  $storm_command = wake ]]; then
                 options="$common_options"
             fi
             if [[ $storm_command = add || $storm_command = edit ]]; then
@@ -30,9 +31,6 @@ __stormssh(){
             fi
             if [[ $storm_command = update ]]; then
                 options="$add_edit_options --connection_uri"
-            fi
-            if [[ $storm_command = web ]]; then
-                options="-h --debug --ssh_config"
             fi
         fi
     else
@@ -46,7 +44,8 @@ __stormssh(){
                   $storm_command = move || 
                   $storm_command = update
                   $storm_command = get_ip ||
-                  $storm_command = ping ]]; then
+                  $storm_command = ping ||
+                  $storm_command = wake ]]; then
                 options=$(storm list | grep "\->" | tr -d " " | awk -F"->" '{print $1}' | xargs | tr -d "[:cntrl:]" | sed 's/\[[0132]*m//g')
             fi
         fi

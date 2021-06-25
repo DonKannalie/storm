@@ -204,6 +204,19 @@ class ConfigParser(object):
 
         return results
 
+    def search_byip(self, search_string):
+        results = []
+        for host_entry in self.config_data:
+            # print(host_entry)
+            if host_entry.get("type") != 'entry':
+                continue
+            if host_entry.get("host") == "*":
+                continue
+
+            if search_string == host_entry.get("options").get("hostname"):
+                results.append(host_entry.get("host"))
+        return results
+
     def delete_host(self, host):
         found = 0
         for index, host_entry in enumerate(self.config_data):

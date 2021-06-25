@@ -5,21 +5,23 @@
 from __future__ import print_function
 
 import builtins
+import platform  # For getting the operating system name
+import colorama
+import subprocess
+import sys
+import re
+import json
+
+from pathlib import Path
+from iterfzf import iterfzf
+from typing import Iterable
+
 from storm import Storm
 from storm.parsers.ssh_uri_parser import parse
 from storm.utils import (get_formatted_message, colored, Colors)
 from storm.kommandr import *
 from storm.defaults import get_default
 from storm import __version__
-
-import platform  # For getting the operating system name
-import colorama
-import subprocess
-import sys
-import re
-
-from iterfzf import iterfzf
-from typing import Iterable
 
 colorama.init()
 
@@ -39,6 +41,16 @@ def display(message, code_type):
         print(get_formatted_message(message, code_type), file=sys.stderr)
     else:
         print(get_formatted_message(message, code_type))
+
+
+def get_aliases(arg):
+    config = Path('~').expanduser().joinpath('.config/stormssh/config')
+
+    with open(config, 'r') as c:
+        conf = json.loads(c.read())
+
+    aliases = conf['aliases'][arg]
+    return aliases
 
 
 def get_storm_instance(config_file=None):
@@ -75,17 +87,13 @@ def ping(host_ip, n=None):
 
 
 def eval_ping_response(ping_result, name, ip):
-    # print(f"type ping_result: {type(ping_result)}")
     packets = re.search(r'.*[P|p]ackets:? (.*)', ping_result).group(0)
-    # print(f"packets: {packets}")
     received = re.search(r'\d?\s[R|r]eceived(\s=\s\d)?', packets).group(0)
-    # print(f"packets: {received}")
     rec = re.search(r'\d', received).group(0)
-    # print(f"rec: {rec}")
     if int(rec) == 0:
-        display(f"host: {name} with {ip} not reached", 'error')
+        display(f"host: {name} ({ip})", 'error')
     else:
-        display(f"host: {name} with {ip} reached", 'success')
+        display(f"host: {name} ({ip})", 'success')
 
 
 @command('version')
@@ -253,17 +261,27 @@ def delete(name, config=None):
 
 
 @command('list')
-def list_items(config=None):
+@arg('name', nargs='*', default=None)
+def list_items(name, config=None):
     """
     Lists all hosts from ssh config.
     """
     storm_ = get_storm_instance(config)
+    lastarg = sys.argv[-1]
+    print(lastarg)
+
+    aliases = get_aliases('list')
 
     try:
         result = colored('Listing entries:', 'white', attrs=["bold", ]) + "\n"
         result_stack = ""
         padding = storm_.get_padding()
-        for host in storm_.list_entries(True):
+
+        if lastarg in aliases:
+            entry_list = storm_.list_entries(True)
+        else:
+            entry_list = storm_.list_entries(True, search=lastarg)
+        for host in entry_list:
 
             if host.get("type") == 'entry':
                 if not host.get("host") == "*":
@@ -383,14 +401,14 @@ def backup(target_file, config=None):
         sys.exit(1)
 
 
-@command('web')
-@arg('port', nargs='?', default=9002, type=int)
-@arg('theme', nargs='?', default="modern", choices=['modern', 'black', 'storm'])
-@arg('debug', action='store_true', default=False)
-def web(port, debug=False, theme="modern", ssh_config=None):
-    """Starts the web UI."""
-    from storm import web as _web
-    _web.run(port, debug, theme, ssh_config)
+# @command('web')
+# @arg('port', nargs='?', default=9002, type=int)
+# @arg('theme', nargs='?', default="modern", choices=['modern', 'black', 'storm'])
+# @arg('debug', action='store_true', default=False)
+# def web(port, debug=False, theme="modern", ssh_config=None):
+#     """Starts the web UI."""
+#     from storm import web as _web
+#     _web.run(port, debug, theme, ssh_config)
 
 
 @command('get-ip')
@@ -431,8 +449,9 @@ def ping_host(name, n=None, config=None, glob=True):
     lastarg = sys.argv[-1]
 
     storm_ = get_storm_instance(config)
+    aliases = get_aliases('ping')
 
-    if lastarg == 'ping':
+    if lastarg in aliases:
         entries = storm_.host_list()
         selected = iterfzf(entries, multi=True)
         # TODO: refactor this bullshit redundancy
@@ -458,13 +477,14 @@ def ping_host(name, n=None, config=None, glob=True):
         ## todo: add option for multiple hosts added. now only
         [name] = name
         ips = storm_.get_hostname(name, glob=glob)
-        print(ips)
+        # print(ips)
         if ips:
             print(f"Pinging host: {name} with {', '.join(ips)}")
             for ip in ips:
                 res = ping(host_ip=ip, n=n)
                 if isinstance(res, tuple):
-                    eval_ping_response(res[1], name, ip)
+                    name_resolved = storm_.get_host_by_ip(ip)
+                    eval_ping_response(res[1], name_resolved, ip)
                 else:
                     print("DEBUG: the value from ping was not returned as a tuple. Please investigate!")
         else:
@@ -474,16 +494,18 @@ def ping_host(name, n=None, config=None, glob=True):
 @command('wake')
 def wake_host(name, config=None):
     """
-    Wake a host from the list specified in ~/.config/stormssh/maclist
-    format json:
+    Wake a host from the list specified in ~/.config/stormssh/config
+    format json (watch the commas):
+    <aliases>,
+    "mac": {
+        "host1": "mac1",
+        "host2": "mac2"
+    }
     <server>: <mac_address>
     "server": "xx:xx:xx:xx:xx:xx"
     """
     storm_ = get_storm_instance(config)
-    res = storm_.wake(name)
-    if not res:
-
-        exit()
+    storm_.wake(name)
 
 
 @command('create-config')

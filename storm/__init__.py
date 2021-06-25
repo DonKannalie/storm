@@ -2,9 +2,13 @@
 
 from __future__ import print_function
 
-from operator import itemgetter
 import re
+import json
+
+from operator import itemgetter
 from shutil import copyfile
+from pathlib import Path
+from wakeonlan import send_magic_packet
 
 from .parsers.ssh_config_parser import ConfigParser
 from .defaults import get_default
@@ -100,9 +104,16 @@ class Storm(object):
 
         return True
 
-    def list_entries(self, order=False, only_servers=False):
+    def list_entries(self, order=False, only_servers=False, search=None):
 
         config_data = self.ssh_config.config_data
+
+        if search is not None:
+            config_data_ = []
+            for i in config_data:
+                if search in i.get("host"):
+                    config_data_.append(i)
+            config_data = config_data_
 
         # required for the web api.
         if only_servers:
@@ -152,6 +163,14 @@ class Storm(object):
             ))
 
         return formatted_results
+
+    def get_host_by_ip(self, search_string):
+        ip = self.ssh_config.search_byip(search_string)
+        if ip:
+            ip_clean = ''.join(ip)
+        else:
+            ip_clean = 'unknown'
+        return ip_clean
 
     def get_options(self, host, user, port, id_file, custom_options):
         options = {
@@ -207,30 +226,51 @@ class Storm(object):
 
         return formatted_results
 
+    # def get_host(self, search_string, glob):
+    #     glob = not glob
+    #     results = self.ssh_config.search_host(search_string, exact_search=glob)
+    #     formatted_results = []
+    #     for host_entry in results:
+    #         formatted_results.append("{0}".format(
+    #             host_entry.get("options").get(
+    #                 "hostname", "[hostname_not_specified]"
+    #             )
+    #         ))
+
     def get_padding(self):
         return self.ssh_config.get_max_length_host()
 
     def wake(self, name):
-        import json
-        from pathlib import Path
-        from wakeonlan import send_magic_packet
         # TODO: implement this properly!
-        maclist = Path('~').expanduser().joinpath('.config/stormssh/maclist')
 
-        if not maclist.exists:
+        config = Path('~').expanduser().joinpath('.config/stormssh/config')
+
+        with open(config, 'r') as c:
+            conf = json.loads(c.read())
+
+        mac_list = None
+        try:
+            mac_list = conf['mac']
+        except KeyError:
             print(f"Could not find ~/.config/stormssh/maclist."
-                  f"This file is not automatically created."
-                  f"See 'storm --help' for more info")
-
-        with open(maclist, 'r') as maclist_:
-            mac = json.loads(maclist_.read())[name]
-
+                  f"\nThis file is not automatically created."
+                  f"\nSee 'storm --help' for more info")
+            exit()
+            # return
         [ip] = self.get_hostname(name, glob=False)
-        if mac and ip:
-            print(f"wol {ip} {mac}")
-            send_magic_packet(mac, ip_address=ip)
-        elif mac:
-            print(f"wol {mac}")
-            send_magic_packet(mac)
+        mac_addr = None
+        try:
+            mac_addr = mac_list[name]
+        except ValueError:
+            print(f"No mac address for '{name}' fround")
+            exit()
+            # return
+
+        if mac_addr and ip:
+            print(f"WOL {ip} {mac_addr}")
+            send_magic_packet(mac_addr, ip_address=ip)
+        elif mac_addr:
+            print(f"WOL {mac_addr}")
+            send_magic_packet(mac_addr)
         else:
             print("DEBUG: formulate a appropriate message here")
