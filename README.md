@@ -1,6 +1,32 @@
 <img src="https://raw.github.com/emre/storm/master/resources/logos/storm-logo.png" height="80">
 ---
 
+---
+Be advised !!!:   
+I don't know what I am doing...the code is really boorish. I just added stuff so it work and did not refactor it. 
+
+However, I added some functions to the original.
+
+Added:  
+* 'search search_word': fetches ip for host and lists servers containing search_word. 
+* 'ping': fetches ip for host and ping the server.  
+  'ping': calls fzf list (no replacement for non-fzf yet)  
+  'ping search_word': greps all host containing search_word.  
+  
+* 'wake': wake on lan   
+  needs "mac" key in ~/.config/stormssh/config.
+    * "mac": "<host>": "<mac_address>"
+    
+* 'create-config': creates config for aliases and mac addresses in ~/.config/stormssh/config 
+
+Removed:  
+* web interface as I never used it
+
+
+
+---
+
+
 [![Join the chat at https://gitter.im/emre/storm](https://badges.gitter.im/emre/storm.svg)](https://gitter.im/emre/storm?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 [![Build Status](https://travis-ci.org/emre/storm.svg?branch=master)](https://travis-ci.org/emre/storm)

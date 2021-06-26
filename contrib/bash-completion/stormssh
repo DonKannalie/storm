@@ -45,6 +45,7 @@ __stormssh(){
                   $storm_command = update
                   $storm_command = get_ip ||
                   $storm_command = ping ||
+                  $storm_command = list ||
                   $storm_command = wake ]]; then
                 options=$(storm list | grep "\->" | tr -d " " | awk -F"->" '{print $1}' | xargs | tr -d "[:cntrl:]" | sed 's/\[[0132]*m//g')
             fi
