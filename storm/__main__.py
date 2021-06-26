@@ -511,7 +511,7 @@ def create_config():
     Create storm config ~/.config/stormssh/config
     You can apply aliases here
     """
-    from parsers.storm_config_parser import create_storm_config
+    from storm.parsers.storm_config_parser import create_storm_config
     create_storm_config()
 
 
