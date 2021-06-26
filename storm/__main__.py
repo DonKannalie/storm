@@ -261,7 +261,7 @@ def delete(name, config=None):
 
 
 @command('list')
-# @arg('name', nargs='*', default=None)
+@arg('name', nargs='*', default=None)
 def list_items(config=None):
     """
     Lists all hosts from ssh config.
