@@ -35,7 +35,7 @@ __stormssh(){
         fi
     else
         if [[ -z $storm_command ]]; then
-            options="add backup clone delete delete_all edit list move search update version web get_ip ping"
+            options="add backup clone delete delete_all edit list move search update version get_ip ping wake"
         fi
         if [[ $storm_command ]]; then
             if [[ $storm_command = clone || 
