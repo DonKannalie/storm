@@ -269,7 +269,8 @@ def list_items(name, config=None):
     lastarg = sys.argv[-1]
     print(lastarg)
 
-    aliases = get_aliases('list').append("list")
+    aliases = get_aliases('list')
+    aliases = aliases.append("list")
 
     try:
         result = colored('Listing entries:', 'white', attrs=["bold", ]) + "\n"
@@ -447,7 +448,8 @@ def ping_host(name, n=None, config=None, glob=True):
     lastarg = sys.argv[-1]
 
     storm_ = get_storm_instance(config)
-    aliases = get_aliases('ping').append("ping")
+    aliases = get_aliases('ping')
+    aliases = aliases.append("ping")
 
     if lastarg in aliases:
         entries = storm_.host_list()
