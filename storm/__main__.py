@@ -8,7 +8,6 @@ import builtins
 import platform  # For getting the operating system name
 import colorama
 import subprocess
-import sys
 import re
 import json
 
@@ -43,13 +42,13 @@ def display(message, code_type):
         print(get_formatted_message(message, code_type))
 
 
-def get_aliases(arg):
+def get_aliases(param):
     config = Path('~').expanduser().joinpath('.config/stormssh/config')
 
     with open(config, 'r') as c:
         conf = json.loads(c.read())
 
-    aliases = conf['aliases'][arg]
+    aliases = conf['aliases'][param]
     return aliases
 
 
@@ -364,7 +363,6 @@ def search(search_text, config=None):
             print('no results found.')
 
         if len(results) > 0:
-            # message = 'Listing results for {0}:\n'.format(search_text)
             message = ''
             message += "".join(results)
             print(message)
@@ -432,7 +430,7 @@ def copy_ids(name, config=None):
     """
     ssh-copy-id function for Unix/Windows
     """
-    storm_ = get_storm_instance(config)
+    # storm_ = get_storm_instance(config)
     # if storm_.search_host(name, True):
     ssh_copy_id(name)
 
