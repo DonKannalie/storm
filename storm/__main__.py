@@ -47,8 +47,9 @@ def get_aliases(param):
 
     with open(config, 'r') as c:
         conf = json.loads(c.read())
-    aliases = []
-    aliases.append(conf['aliases'][param])
+    aliases = [param]
+    for al in conf['aliases'][param]:
+        aliases.append(al)
     return aliases
 
 
@@ -269,8 +270,6 @@ def list_items(config=None):
     lastarg = sys.argv[-1]
 
     aliases = get_aliases('list')
-    aliases.append("list")
-    print(aliases)
 
     try:
         result = colored('Listing entries:', 'white', attrs=["bold", ]) + "\n"
@@ -449,7 +448,6 @@ def ping_host(name, n=None, config=None, glob=True):
 
     storm_ = get_storm_instance(config)
     aliases = get_aliases('ping')
-    aliases.append("ping")
 
     if lastarg in aliases:
         entries = storm_.host_list()
