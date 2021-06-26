@@ -472,7 +472,6 @@ def ping_host(name, n=None, config=None, glob=True):
                 else:
                     print("DEBUG: the value from ping was not returned as a tuple. Please investigate!")
     else:
-        ## todo: add option for multiple hosts added. now only
         [name] = name
         ips = storm_.get_hostname(name, glob=glob)
         # print(ips)
