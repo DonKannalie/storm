@@ -3,12 +3,12 @@
 
 ---
 Be advised !!!:   
-I don't know what I am doing...the code is really boorish. I just added stuff so it work and did not refactor it. 
+I don't know what I am doing...the code is really boorish. I just added stuff so it works and did not refactor it. 
 
 However, I added some functions to the original.
 
 Added:  
-* 'search search_word': fetches ip for host and lists servers containing search_word. 
+* 'search search_word': fetches lists servers containing search_word. 
 * 'ping': fetches ip for host and ping the server.  
   'ping': calls fzf list (no replacement for non-fzf yet)  
   'ping search_word': greps all host containing search_word.  
