@@ -539,6 +539,7 @@ def check_server(name, config=None):
         print(hostname, user, port, ident_file)
         sshc = SSH(hostname, user, port, ident_file)
         status = sshc.open()
+        print("ssh status: ", status)
         if status:
             get_server_info(sshc)
         sshc.close()

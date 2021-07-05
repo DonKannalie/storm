@@ -15,37 +15,34 @@ def banner(txt):
     print(f"{colored('##', 'green')} {colored(txt, 'cyan')} {colored('##', 'green')}")
     print(colored("#", 'green') * (length + 6))
 
-def run_quick_info(ssh_connection):
-    ...
-
-
-
-
 def run_w(ssh_connection):
     output = ssh_connection.run_cmd('w -si')
-    print(output)
+    # print(output)
     table = None
     uptime = None
 
     for i, r in enumerate(output.split("\n")):
+        # print(i, r)
         if i == 1:
             header = r.split(" ")
             while "" in header:
                 header.remove("")
             # print(rows)
             if header:
+                # print(header)
                 table = PrettyTable(header)
         if i > 1:
             row = r.split(" ")
             while "" in row:
                 row.remove("")
-            # print(vals)
-            if row:
-                table.add_row(row)
+            r1 = row[0:4]
+            r1.append('\n'.join(row[5:]))
+
+            if r1 and len(r1) == 5:
+                # print(r1)
+                table.add_row(r1)
 
     table.align = "l"
-    table.set_style(MARKDOWN)
-
     banner("USER ON SERVER:")
     print(table, "\n")
 
@@ -71,9 +68,8 @@ def run_m(ssh_connection):
                     row.append("")
                 # print(row)
                 table.add_row(row)
-    table.align = "l"
-    table.set_style(MARKDOWN)
 
+    table.align = "l"
     banner("MEMORY:")
     print(table, "\n")
 
@@ -104,10 +100,8 @@ def run_io(ssh_connection):
             # print(row)
             if row and "loop" not in row[0]:
                 table.add_row(row)
-    table.align = "l"
-    # table.set_style(ORGMODE)
-    table.set_style(MARKDOWN)
 
+    table.align = "l"
     banner("IO-STAT:")
     print(table, "\n")
 
@@ -134,7 +128,7 @@ def run_info(ssh_connection):
         # print([k, v])
         table.add_row([k, colored(v.strip(), 'green')])
     table.align = 'l'
-    # table.set_style(MARKDOWN)
+
     banner(f"System Info: {host_name.strip()} ({host_ip.strip()})")
     uptime = ssh_connection.run_cmd('uptime -p')
     if uptime:
@@ -154,39 +148,6 @@ def run_info(ssh_connection):
 def run_network(ssh_connection):
     output = ssh_connection.run_cmd('ip a')
     banner("Network devices")
-    # print(output)
-
-    wan_ip = ssh_connection.run_cmd("curl -A curl -s https://api.ipify.org")
-    if wan_ip:
-        print(f"WAN IP: {colored(wan_ip.strip(), 'green')}")
-
-    ip_route = ssh_connection.run_cmd("ip route | grep ^default'\s'via | head -1 | awk '{print$3}'")
-    if ip_route:
-        print(f"IP ROUTE: {colored(ip_route.strip(), 'green')}")
-
-    host_dns = ssh_connection.run_cmd("cat /etc/resolv.conf | grep -i ^nameserver | cut -d ' ' -f2")
-    if host_dns:
-        print(f"DNS: {colored(host_dns.strip(), 'green')}")
-
-    net_info = []
-    net_country = ssh_connection.run_cmd("curl -A curl -s \"http://ip-api.com/line/?fields=country\"")
-    if net_country:
-        net_info.append(net_country.strip())
-
-    net_zip = ssh_connection.run_cmd("curl -A curl -s \"http://ip-api.com/line/?fields=zip\"")
-    if net_zip:
-        net_info.append(net_zip.strip())
-
-    net_city = ssh_connection.run_cmd("curl -A curl -s \"http://ip-api.com/line/?fields=city\"")
-    if net_city:
-        net_info.append(net_city.strip())
-
-    net_isp = ssh_connection.run_cmd("curl -A curl -s \"http://ip-api.com/line/?fields=isp\"")
-    if net_isp:
-        net_info.append(net_isp.strip())
-
-    if net_info:
-        print("GEO info: ", colored(', '.join(net_info), 'green'))
 
     pattern_mac = r"([0-9a-f]{2}(?::[0-9a-f]{2}){5})"
     pattern_ip = r"(?:\d{1,3}\.){3}\d{1,3}(?:/\d\d?)?"
@@ -227,11 +188,16 @@ def run_network(ssh_connection):
 
 
 def short_status(ssh_connection):
-    print(os.getcwd())
+    file = Path('~/.local/bin/').expanduser().joinpath('collect_server_info.sh')
+    print(file)
 
-    out = ssh_connection.upload_file('collect_server_info.sh', '/home/sj/collect_server_info.sh')
-    out = ssh_connection.run_cmd('bash ~/collect_server_info.sh')
-    ssh_connection.run_cmd('rm -f ~/collect_server_info.sh')
+    ssh_connection.run_cmd(f'rm -f /home/{ssh_connection.username}/collect_server_info.sh')
+    ssh_connection.upload_file(file, f'/home/{ssh_connection.username}/collect_server_info.sh')
+    print(f"Uploaded {file}")
+    out = ssh_connection.run_cmd(f'bash /home/{ssh_connection.username}/collect_server_info.sh')
+    print(f"Executed {file}")
+    ssh_connection.run_cmd(f'rm -f /home/{ssh_connection.username}/collect_server_info.sh')
+    print(f"Removed {file}")
 
     server_info = {}
 
@@ -248,14 +214,16 @@ def short_status(ssh_connection):
         table.add_row([k.replace("_", " ").upper(), colored(v.strip(), 'green')])
 
     table.align = 'l'
+    banner(f"System Info: {ssh_connection.server}")
     print(table)
 
 def get_server_info(ssh_connection):
     short_status(ssh_connection)
+    run_network(ssh_connection)
+    run_w(ssh_connection)
+
     # run_info(ssh_connection)
-    # run_network(ssh_connection)
     # run_m(ssh_connection)
-    # run_w(ssh_connection)
     # run_io(ssh_connection)
 
 

@@ -1,6 +1,6 @@
 import os
 import paramiko
-
+from pathlib import Path
 from storm import interactive
 
 # from getpass import getpass
@@ -19,10 +19,11 @@ class SSH:
         if port is None:
             self.port = 22
         else:
-            self.port = port
+            self.port = int(port)
 
         if identity_file is None:
-            self.identity_file = os.path.join("~", ".ssh", "id_rsa")
+            self.identity_file = Path("~/.ssh/id_rsa").expanduser()
+            print(self.identity_file)
         else:
             self.identity_file = identity_file
 
@@ -39,27 +40,23 @@ class SSH:
             self.sss.connect(self.server, username=self.username, pkey=self.key, timeout=self.timeout)
         except paramiko.AuthenticationException:
             print("[-] Authentication Exception! ...")
-            # return
             exit(1)
         except paramiko.SSHException:
             print("[-] SSH Exception! ...")
-            # return
             exit(1)
         except Exception as err:
             print("[-] Exception!:", err)
-            # return
             exit(1)
         return True
 
     def open_transport(self):
         if self.sss:
+            # transport = paramiko.Transport((self.server, self.port))
+            # transport.connect(username=self.username, pkey=self.key)
+            # self.sss._transport = transport
             transport = paramiko.Transport((self.server, self.port))
             transport.connect(username=self.username, pkey=self.key)
-            self.sss._transport = transport
-
-    def open_sftp(self):
-        sftp = self.sss.open_sftp()
-        return sftp
+            return paramiko.SFTPClient.from_transport(transport)
 
     def close(self):
         self.sss.close()
@@ -69,11 +66,11 @@ class SSH:
             pass
 
     def download_file(self, remote_file, local_file):
-        sftp = self.open_sftp()
+        sftp = self.open_transport()
         sftp.get(remote_file, local_file)
 
     def upload_file(self, local_file, remote_file):
-        sftp = self.open_sftp()
+        sftp = self.open_transport()
         sftp.put(local_file, remote_file)
 
     def run_cmd(self, cmd):

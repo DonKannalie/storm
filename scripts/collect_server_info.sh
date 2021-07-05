@@ -36,6 +36,7 @@ net_country=$(curl -A curl -s "http://ip-api.com/line/?fields=country")
 net_zip=$(curl -A curl -s "http://ip-api.com/line/?fields=zip")
 net_city=$(curl -A curl -s "http://ip-api.com/line/?fields=city")
 net_isp=$(curl -A curl -s "http://ip-api.com/line/?fields=isp")
+package_upgrade=$(apt list --upgradable | wc -l)
 
 echo "uptime=$uptime"
 echo "node_name=$node_name"
@@ -61,3 +62,4 @@ echo "net_country=$net_country"
 echo "net_zip=$net_zip"
 echo "net_city=$net_city"
 echo "net_isp=$net_isp"
+echo "package_upgrade=$package_upgrade"
