@@ -5,3 +5,4 @@ colorama
 iterfzf
 ping3
 wakeonlan
+prettytable

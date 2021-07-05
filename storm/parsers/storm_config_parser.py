@@ -30,12 +30,14 @@ def create_storm_config():
     config_root.mkdir(exist_ok=True)
     try:
         config_file.touch()
+
     except Exception as e:
         print("Config could not be created!!")
         print(e)
 
     # if config_file.exists():
     with open(config_file, 'w') as cf:
+        # add config data
         json.dump(CONFIG_DATA, cf, indent=4)
     if config_file.exists():
         print(get_formatted_message("StormSSH: Config file created: %s." % config_file, 'success'))

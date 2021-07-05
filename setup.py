@@ -15,6 +15,7 @@ setup(
     author='Emre Yilmaz',
     author_email='mail@emreyilmaz.me',
     description='Management commands to ssh config files.',
+    scripts=['scripts/collect_server_info.sh'],
     entry_points={
         'console_scripts': [
             'storm = storm.__main__:main',
@@ -24,6 +25,7 @@ setup(
         "paramiko",
         "termcolor",
         # "flask",
+        "prettytable",
         "colorama",
         "argparse" if sys.version_info[:2] < (2, 7) else None,
         "six",

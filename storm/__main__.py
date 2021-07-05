@@ -21,6 +21,8 @@ from storm.utils import (get_formatted_message, colored, Colors)
 from storm.kommandr import *
 from storm.defaults import get_default
 from storm import __version__
+from storm.ssh_custom import SSH
+from storm.check_server import get_server_info
 
 colorama.init()
 
@@ -474,9 +476,8 @@ def ping_host(name, n=None, config=None, glob=True):
     else:
         [name] = name
         ips = storm_.get_hostname(name, glob=glob)
-        # print(ips)
         if ips:
-            print(f"Pinging host: {name} with {', '.join(ips)}")
+            # print(f"Pinging host{'s' if len(ips) > 1 else ''}: {name} with {', '.join(ips)}")
             for ip in ips:
                 res = ping(host_ip=ip, n=n)
                 if isinstance(res, tuple):
@@ -513,6 +514,39 @@ def create_config():
     """
     from parsers.storm_config_parser import create_storm_config
     create_storm_config()
+
+
+@command('check')
+def check_server(name, config=None):
+    storm_ = get_storm_instance(config)
+    # host = storm_.search_host(name, exact_search=True)
+    entries = storm_.list_entries(search=name)
+
+    # if entries and len(entries) == 1:
+    for entry in entries:
+        # entry = entries[0]
+        # print(entry)
+        hostname = entry.get('options').get('hostname')
+        # print(hostname)
+        user = entry.get('options').get('user')
+        # print(user)
+        port = entry.get('options').get('port')
+        # print(port)
+        ident_file = entry.get('options').get('identityfile')
+        # print(ident_file)
+        if ident_file:
+            ident_file = ident_file[0]
+        print(hostname, user, port, ident_file)
+        sshc = SSH(hostname, user, port, ident_file)
+        status = sshc.open()
+        if status:
+            get_server_info(sshc)
+        sshc.close()
+
+
+
+    # ips = storm_.get_hostname(name, glob=False)
+    # print(ips)
 
 
 # TODO: 'check' command: ssh command to host

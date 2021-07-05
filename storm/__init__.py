@@ -128,6 +128,7 @@ class Storm(object):
             config_data = sorted(config_data, key=itemgetter("host"))
         return config_data
 
+
     def host_list(self):
         config_data = self.ssh_config.config_data
 
