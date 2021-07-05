@@ -8,6 +8,7 @@ from prettytable import MSWORD_FRIENDLY, ORGMODE, MARKDOWN
 from storm.utils import colored
 
 
+
 def banner(txt):
     length = len(txt)
     print(colored("#", 'green') * (length + 6))
@@ -226,7 +227,8 @@ def run_network(ssh_connection):
 
 
 def short_status(ssh_connection):
-    print()
+    print(os.getcwd())
+
     out = ssh_connection.upload_file('collect_server_info.sh', '/home/sj/collect_server_info.sh')
     out = ssh_connection.run_cmd('bash ~/collect_server_info.sh')
     ssh_connection.run_cmd('rm -f ~/collect_server_info.sh')
