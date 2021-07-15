@@ -8,12 +8,12 @@ from prettytable import MSWORD_FRIENDLY, ORGMODE, MARKDOWN
 from storm.utils import colored
 
 
-
 def banner(txt):
     length = len(txt)
     print(colored("#", 'green') * (length + 6))
     print(f"{colored('##', 'green')} {colored(txt, 'cyan')} {colored('##', 'green')}")
     print(colored("#", 'green') * (length + 6))
+
 
 def run_w(ssh_connection):
     output = ssh_connection.run_cmd('w -si')
@@ -189,21 +189,19 @@ def run_network(ssh_connection):
 
 def short_status(ssh_connection):
     file = Path('~/.local/bin/').expanduser().joinpath('collect_server_info.sh')
-    print(file)
-
-    ssh_connection.run_cmd(f'rm -f /home/{ssh_connection.username}/collect_server_info.sh')
-    ssh_connection.upload_file(file, f'/home/{ssh_connection.username}/collect_server_info.sh')
-    print(f"Uploaded {file}")
+    ssh_connection.run_cmd(f'rm -f /home/{ssh_connection.username}/collect_server_info.sh >/dev/null')
+    res = ssh_connection.upload_file(file, f'/home/{ssh_connection.username}/collect_server_info.sh')
+    print(f"Uploaded: {file}")
     out = ssh_connection.run_cmd(f'bash /home/{ssh_connection.username}/collect_server_info.sh')
-    print(f"Executed {file}")
-    ssh_connection.run_cmd(f'rm -f /home/{ssh_connection.username}/collect_server_info.sh')
-    print(f"Removed {file}")
+    print(f"Executed: {file}")
+    ssh_connection.run_cmd(f'rm -f /home/{ssh_connection.username}/collect_server_info.sh >/dev/null')
+    print(f"Removed: {file}")
 
     server_info = {}
 
-    for i in out.split("\n"):
-        if i:
-            key, val = i.split("=")
+    for info_line in out.split("\n"):
+        if info_line:
+            key, val = info_line.split("=")
             if val:
                 server_info[key] = [val][0]
 
@@ -217,6 +215,7 @@ def short_status(ssh_connection):
     banner(f"System Info: {ssh_connection.server}")
     print(table)
 
+
 def get_server_info(ssh_connection):
     short_status(ssh_connection)
     run_network(ssh_connection)
@@ -225,22 +224,6 @@ def get_server_info(ssh_connection):
     # run_info(ssh_connection)
     # run_m(ssh_connection)
     # run_io(ssh_connection)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 # import re
 #

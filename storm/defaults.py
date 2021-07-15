@@ -23,6 +23,14 @@ CONFIG_DATA = {
     }
 }
 
+COLOR_CODES = [
+    "\x1b[1m",
+    "\x1b[37m",
+    "\x1b[0m",
+    "\x1b[32m",
+    "\x1b[35m",
+]
+
 # COLOR = {
 #     # styles
 #     'bold': ['\033[1m', '\033[22m'],

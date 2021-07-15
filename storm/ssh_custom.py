@@ -67,11 +67,11 @@ class SSH:
 
     def download_file(self, remote_file, local_file):
         sftp = self.open_transport()
-        sftp.get(remote_file, local_file)
+        return sftp.get(remote_file, local_file)
 
     def upload_file(self, local_file, remote_file):
         sftp = self.open_transport()
-        sftp.put(local_file, remote_file)
+        return sftp.put(local_file, remote_file)
 
     def run_cmd(self, cmd):
         if self.sss:

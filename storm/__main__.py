@@ -145,8 +145,6 @@ def add(name, connection_uri, id_file="", o=None, config=None):
         display(error, 'error')
         sys.exit(1)
 
-    # _copy_id(name, config=None)
-
 
 @command('clone')
 def clone(name, clone_name, config=None):
@@ -523,31 +521,24 @@ def check_server(name, config=None):
     entries = storm_.list_entries(search=name)
 
     # if entries and len(entries) == 1:
-    for entry in entries:
-        # entry = entries[0]
-        # print(entry)
-        hostname = entry.get('options').get('hostname')
-        # print(hostname)
-        user = entry.get('options').get('user')
-        # print(user)
-        port = entry.get('options').get('port')
-        # print(port)
-        ident_file = entry.get('options').get('identityfile')
-        # print(ident_file)
-        if ident_file:
-            ident_file = ident_file[0]
-        print(hostname, user, port, ident_file)
-        sshc = SSH(hostname, user, port, ident_file)
-        status = sshc.open()
-        print("ssh status: ", status)
-        if status:
-            get_server_info(sshc)
-        sshc.close()
-
-
-
-    # ips = storm_.get_hostname(name, glob=False)
-    # print(ips)
+    if entries:
+        for entry in entries:
+            hostname = entry.get('options').get('hostname')
+            user = entry.get('options').get('user')
+            port = entry.get('options').get('port')
+            ident_file = entry.get('options').get('identityfile')
+            # print(ident_file)
+            if ident_file:
+                ident_file = ident_file[0]
+            print(hostname, user, port, ident_file)
+            sshc = SSH(hostname, user, port, ident_file)
+            status = sshc.open()
+            print("ssh status: ", status)
+            if status:
+                get_server_info(sshc)
+            sshc.close()
+    else:
+        display(f"host: {name} not found", 'error')
 
 
 # TODO: 'check' command: ssh command to host

@@ -5,7 +5,7 @@ import subprocess as sp
 from termcolor import colored
 import sys
 
-from storm.defaults import col_dict
+from storm.defaults import col_dict, COLOR_CODES
 
 
 def fixed_width(text, size):
@@ -44,13 +44,6 @@ class Colors:
                 return v
 
 
-COLOR_CODES = [
-    "\x1b[1m",
-    "\x1b[37m",
-    "\x1b[0m",
-    "\x1b[32m",
-    "\x1b[35m",
-]
 
 
 def get_formatted_message(message, format_type):

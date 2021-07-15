@@ -8,6 +8,8 @@ import json
 from operator import itemgetter
 from shutil import copyfile
 from pathlib import Path
+
+import six
 from wakeonlan import send_magic_packet
 
 from .parsers.ssh_config_parser import ConfigParser
@@ -77,6 +79,7 @@ class Storm(object):
         return True
 
     def edit_entry(self, name, host, user, port, id_file, custom_options=None):
+        print(custom_options)
         if custom_options is None:
             custom_options = []
 
@@ -84,6 +87,7 @@ class Storm(object):
             raise ValueError(ERRORS["not_found"].format(name))
 
         options = self.get_options(host, user, port, id_file, custom_options)
+        print(options)
         self.ssh_config.update_host(name, options, use_regex=False)
         self.ssh_config.write_to_ssh_config()
 
@@ -127,7 +131,6 @@ class Storm(object):
         if order:
             config_data = sorted(config_data, key=itemgetter("host"))
         return config_data
-
 
     def host_list(self):
         config_data = self.ssh_config.config_data
@@ -190,8 +193,8 @@ class Storm(object):
             for custom_option in custom_options:
                 if '=' in custom_option:
                     key, value = custom_option.split("=")
-
                     options.update({key.lower(): value, })
+
         options = self._quote_options(options)
 
         return options
