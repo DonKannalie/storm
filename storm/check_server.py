@@ -253,9 +253,9 @@ def run_network(ssh_connection):
 
 def short_status(ssh_connection):
     out = ssh_connection.run_cmd(CMD)
-    # if not out:
-    #     print("could not get server info.")
-    #     exit(1)
+    if not out:
+        print("could not get server info.")
+        exit(1)
     server_info = {}
     for info_line in out.split("\n"):
         if info_line:
@@ -266,7 +266,7 @@ def short_status(ssh_connection):
     header = ['Type', 'Info']
     table = PrettyTable(header)
     for k, v in server_info.items():
-        # print(k, v)
+        print(k, v)
         table.add_row([k.replace("_", " ").upper(), colored(v.strip(), 'green')])
 
     table.align = 'l'
