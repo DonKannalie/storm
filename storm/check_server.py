@@ -236,7 +236,6 @@ def run_network(ssh_connection):
         if re.search(pattern_mac, r):
             mac = [i for i in re.findall(pattern_mac, r) if i != 'ff:ff:ff:ff:ff:ff']
 
-        out = ''
         if dev:
             print(dev.strip())
         if ip:
@@ -249,13 +248,14 @@ def run_network(ssh_connection):
                 print("\tIP:", colored(ip[0].strip(), 'green'))
         if mac:
             print("\tMac:", colored(mac[0].strip(), 'blue'))
-
     print("")
 
 
 def short_status(ssh_connection):
     out = ssh_connection.run_cmd(CMD)
-
+    if not out:
+        print("could not get server info.")
+        exit(1)
     server_info = {}
     for info_line in out.split("\n"):
         if info_line:
