@@ -188,7 +188,8 @@ def run_network(ssh_connection):
 
 
 def short_status(ssh_connection):
-    file = Path('~/.local/bin/').expanduser().joinpath('collect_server_info.sh')
+    #file = Path('~/.local/bin/').expanduser().joinpath('collect_server_info.sh')
+    file = Path('collect_server_info.sh')
     ssh_connection.run_cmd(f'rm -f /home/{ssh_connection.username}/collect_server_info.sh >/dev/null')
     res = ssh_connection.upload_file(file, f'/home/{ssh_connection.username}/collect_server_info.sh')
     print(f"Uploaded: {file}")
