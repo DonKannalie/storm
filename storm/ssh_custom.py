@@ -23,7 +23,6 @@ class SSH:
 
         if identity_file is None:
             self.identity_file = Path("~/.ssh/id_rsa").expanduser()
-            print(self.identity_file)
         else:
             self.identity_file = identity_file
 

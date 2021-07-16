@@ -39,7 +39,7 @@ host_ip=$(hostname -i)
 wan_ip=$(curl -A curl -s https://api.ipify.org)
 ip_dhcp=$(ip r | grep default | grep dhcp -oq && echo "true" || echo "false")
 ip_route=$(ip route | grep ^default'\s'via | head -1 | awk '{print$3}')
-host_dns=$(cat /etc/resolv.conf | grep -i ^nameserver | cut -d ' ' -f2)
+host_dns=$(cat /etc/resolv.conf | grep -i ^nameserver | cut -d ' ' -f2 | awk '{print}' ORS=' ')
 net_country=$(curl -A curl -s "http://ip-api.com/line/?fields=country")
 net_zip=$(curl -A curl -s "http://ip-api.com/line/?fields=zip")
 net_city=$(curl -A curl -s "http://ip-api.com/line/?fields=city")
@@ -266,7 +266,6 @@ def short_status(ssh_connection):
     header = ['Type', 'Info']
     table = PrettyTable(header)
     for k, v in server_info.items():
-        print(k, v)
         table.add_row([k.replace("_", " ").upper(), colored(v.strip(), 'green')])
 
     table.align = 'l'

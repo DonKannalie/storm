@@ -517,26 +517,38 @@ def create_config():
 @command('check')
 def check_server(name, config=None):
     storm_ = get_storm_instance(config)
-    # host = storm_.search_host(name, exact_search=True)
     entries = storm_.list_entries(search=name)
 
-    # if entries and len(entries) == 1:
     if entries:
-        for entry in entries:
+        entries_filtered = []
+        if entries and len(entries) > 1:
+            entries_names = [name.get('host') for name in entries]
+            entries_names = ['all'] + entries_names
+            selected = iterfzf(entries_names, multi=True)
+
+            if selected:
+                if 'all' in selected:
+                    entries_filtered = entries
+                else:
+                    for entry in entries:
+                        if entry.get('host') in selected:
+                            entries_filtered.append(entry)
+        else:
+            entries_filtered = entries
+
+        for entry in entries_filtered:
             hostname = entry.get('options').get('hostname')
             user = entry.get('options').get('user')
             port = entry.get('options').get('port')
             ident_file = entry.get('options').get('identityfile')
-            # print(ident_file)
             if ident_file:
                 ident_file = ident_file[0]
-            print(hostname, user, port, ident_file)
             sshc = SSH(hostname, user, port, ident_file)
             status = sshc.open()
-            print("ssh status: ", status)
             if status:
                 get_server_info(sshc)
             sshc.close()
+
     else:
         display(f"host: {name} not found", 'error')
 
